@@ -36,6 +36,11 @@ func (a *Agent) Start() error {
 		if err != nil {
 			return err
 		}
+
+		err = a.Toolbox.Start()
+		if err != nil {
+			return err
+		}
 	}
 
 	go func() {

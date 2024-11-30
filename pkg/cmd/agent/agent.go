@@ -14,6 +14,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/agent/config"
 	"github.com/daytonaio/daytona/pkg/agent/ssh"
 	"github.com/daytonaio/daytona/pkg/agent/tailscale"
+	"github.com/daytonaio/daytona/pkg/agent/toolbox"
 	"github.com/daytonaio/daytona/pkg/git"
 	"github.com/daytonaio/daytona/pkg/workspace/project"
 	log "github.com/sirupsen/logrus"
@@ -73,6 +74,8 @@ var AgentCmd = &cobra.Command{
 			tailscaleHostname = c.WorkspaceId
 		}
 
+		toolBoxServer := &toolbox.Server{}
+
 		telemetryEnabled := os.Getenv("DAYTONA_TELEMETRY_ENABLED") == "true"
 
 		tailscaleServer := &tailscale.Server{
@@ -86,6 +89,7 @@ var AgentCmd = &cobra.Command{
 			Config:           c,
 			Git:              git,
 			Ssh:              sshServer,
+			Toolbox:          toolBoxServer,
 			Tailscale:        tailscaleServer,
 			LogWriter:        agentLogWriter,
 			TelemetryEnabled: telemetryEnabled,
