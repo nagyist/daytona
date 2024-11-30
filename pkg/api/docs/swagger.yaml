@@ -223,6 +223,20 @@ definitions:
     required:
     - filePath
     type: object
+  ExecuteRequest:
+    properties:
+      command:
+        type: string
+    required:
+    - command
+    type: object
+  ExecuteResponse:
+    properties:
+      code:
+        type: integer
+      result:
+        type: string
+    type: object
   FRPSConfig:
     properties:
       domain:
@@ -235,6 +249,25 @@ definitions:
     - domain
     - port
     - protocol
+    type: object
+  FileInfo:
+    properties:
+      group:
+        type: string
+      isDir:
+        type: boolean
+      modTime:
+        type: string
+      mode:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      permissions:
+        type: string
+      size:
+        type: integer
     type: object
   FileStatus:
     properties:
@@ -2125,6 +2158,68 @@ paths:
         "200":
           description: OK
       summary: Stop project
+      tags:
+      - workspace
+  /workspace/{workspaceId}/{projectId}/toolbox/execute:
+    post:
+      description: Execute command inside workspace project
+      operationId: ExecuteCommand
+      parameters:
+      - description: Workspace ID or Name
+        in: path
+        name: workspaceId
+        required: true
+        type: string
+      - description: Project Id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Execute command
+        in: body
+        name: command
+        required: true
+        schema:
+          $ref: '#/definitions/ExecuteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ExecuteResponse'
+      summary: Execute command inside workspace project
+      tags:
+      - workspace
+  /workspace/{workspaceId}/{projectId}/toolbox/files:
+    get:
+      description: List files inside workspace project
+      operationId: ListFiles
+      parameters:
+      - description: Workspace ID or Name
+        in: path
+        name: workspaceId
+        required: true
+        type: string
+      - description: Project Id
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Path
+        in: query
+        name: path
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/FileInfo'
+            type: array
+      summary: List files inside workspace project
       tags:
       - workspace
   /workspace/{workspaceId}/start:

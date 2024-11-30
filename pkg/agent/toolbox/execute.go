@@ -13,12 +13,12 @@ import (
 
 type ExecuteRequest struct {
 	Command string `json:"command" binding:"required"`
-}
+} // @name ExecuteRequest
 
 type ExecuteResponse struct {
 	Code   int    `json:"code"`
 	Result string `json:"result"`
-}
+} // @name ExecuteResponse
 
 func executeCommand(c *gin.Context) {
 	var request ExecuteRequest

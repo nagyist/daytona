@@ -24,7 +24,7 @@ type FileInfo struct {
 	Owner       string `json:"owner"`
 	Group       string `json:"group"`
 	Permissions string `json:"permissions"`
-}
+} // @name FileInfo
 
 type ReplaceRequest struct {
 	Files    []string `json:"files" binding:"required"`

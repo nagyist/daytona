@@ -37,10 +37,12 @@ func (a *Agent) Start() error {
 			return err
 		}
 
-		err = a.Toolbox.Start()
-		if err != nil {
-			return err
-		}
+		go func() {
+			err = a.Toolbox.Start()
+			if err != nil {
+				log.Error(fmt.Sprintf("failed to start toolbox server: %s", err))
+			}
+		}()
 	}
 
 	go func() {

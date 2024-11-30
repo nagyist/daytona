@@ -47,6 +47,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/api/controllers/server"
 	"github.com/daytonaio/daytona/pkg/api/controllers/target"
 	"github.com/daytonaio/daytona/pkg/api/controllers/workspace"
+	"github.com/daytonaio/daytona/pkg/api/controllers/workspace/toolbox"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -149,6 +150,12 @@ func (a *ApiServer) Start() error {
 		workspaceController.DELETE("/:workspaceId", workspace.RemoveWorkspace)
 		workspaceController.POST("/:workspaceId/:projectId/start", workspace.StartProject)
 		workspaceController.POST("/:workspaceId/:projectId/stop", workspace.StopProject)
+
+		toolboxController := workspaceController.Group("/:workspaceId/:projectId/toolbox")
+		{
+			toolboxController.POST("/execute", toolbox.ExecuteCommand)
+			toolboxController.GET("/files", toolbox.ListFiles)
+		}
 	}
 
 	projectConfigController := protected.Group("/project-config")

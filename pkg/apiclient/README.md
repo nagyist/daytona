@@ -133,7 +133,9 @@ Class | Method | HTTP request | Description
 *TargetAPI* | [**SetDefaultTarget**](docs/TargetAPI.md#setdefaulttarget) | **Patch** /target/{target}/set-default | Set target to default
 *TargetAPI* | [**SetTarget**](docs/TargetAPI.md#settarget) | **Put** /target | Set a target
 *WorkspaceAPI* | [**CreateWorkspace**](docs/WorkspaceAPI.md#createworkspace) | **Post** /workspace | Create a workspace
+*WorkspaceAPI* | [**ExecuteCommand**](docs/WorkspaceAPI.md#executecommand) | **Post** /workspace/{workspaceId}/{projectId}/toolbox/execute | Execute command inside workspace project
 *WorkspaceAPI* | [**GetWorkspace**](docs/WorkspaceAPI.md#getworkspace) | **Get** /workspace/{workspaceId} | Get workspace info
+*WorkspaceAPI* | [**ListFiles**](docs/WorkspaceAPI.md#listfiles) | **Get** /workspace/{workspaceId}/{projectId}/toolbox/files | List files inside workspace project
 *WorkspaceAPI* | [**ListWorkspaces**](docs/WorkspaceAPI.md#listworkspaces) | **Get** /workspace | List workspaces
 *WorkspaceAPI* | [**RemoveWorkspace**](docs/WorkspaceAPI.md#removeworkspace) | **Delete** /workspace/{workspaceId} | Remove workspace
 *WorkspaceAPI* | [**SetProjectState**](docs/WorkspaceAPI.md#setprojectstate) | **Post** /workspace/{workspaceId}/{projectId}/state | Set project state
@@ -162,7 +164,10 @@ Class | Method | HTTP request | Description
  - [CreateProviderTargetDTO](docs/CreateProviderTargetDTO.md)
  - [CreateWorkspaceDTO](docs/CreateWorkspaceDTO.md)
  - [DevcontainerConfig](docs/DevcontainerConfig.md)
+ - [ExecuteRequest](docs/ExecuteRequest.md)
+ - [ExecuteResponse](docs/ExecuteResponse.md)
  - [FRPSConfig](docs/FRPSConfig.md)
+ - [FileInfo](docs/FileInfo.md)
  - [FileStatus](docs/FileStatus.md)
  - [GetRepositoryContext](docs/GetRepositoryContext.md)
  - [GitBranch](docs/GitBranch.md)

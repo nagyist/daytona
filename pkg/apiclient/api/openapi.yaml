@@ -1349,6 +1349,75 @@ paths:
       summary: Stop project
       tags:
       - workspace
+  /workspace/{workspaceId}/{projectId}/toolbox/execute:
+    post:
+      description: Execute command inside workspace project
+      operationId: ExecuteCommand
+      parameters:
+      - description: Workspace ID or Name
+        in: path
+        name: workspaceId
+        required: true
+        schema:
+          type: string
+      - description: Project Id
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ExecuteRequest'
+        description: Execute command
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecuteResponse'
+          description: OK
+      summary: Execute command inside workspace project
+      tags:
+      - workspace
+      x-codegen-request-body-name: command
+  /workspace/{workspaceId}/{projectId}/toolbox/files:
+    get:
+      description: List files inside workspace project
+      operationId: ListFiles
+      parameters:
+      - description: Workspace ID or Name
+        in: path
+        name: workspaceId
+        required: true
+        schema:
+          type: string
+      - description: Project Id
+        in: path
+        name: projectId
+        required: true
+        schema:
+          type: string
+      - description: Path
+        in: query
+        name: path
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/FileInfo'
+                type: array
+          description: OK
+      summary: List files inside workspace project
+      tags:
+      - workspace
 components:
   schemas:
     ApiKey:
@@ -1751,6 +1820,25 @@ components:
       required:
       - filePath
       type: object
+    ExecuteRequest:
+      example:
+        command: command
+      properties:
+        command:
+          type: string
+      required:
+      - command
+      type: object
+    ExecuteResponse:
+      example:
+        result: result
+        code: 0
+      properties:
+        code:
+          type: integer
+        result:
+          type: string
+      type: object
     FRPSConfig:
       example:
         protocol: protocol
@@ -1767,6 +1855,34 @@ components:
       - domain
       - port
       - protocol
+      type: object
+    FileInfo:
+      example:
+        mode: mode
+        owner: owner
+        size: 0
+        modTime: modTime
+        permissions: permissions
+        name: name
+        group: group
+        isDir: true
+      properties:
+        group:
+          type: string
+        isDir:
+          type: boolean
+        modTime:
+          type: string
+        mode:
+          type: string
+        name:
+          type: string
+        owner:
+          type: string
+        permissions:
+          type: string
+        size:
+          type: integer
       type: object
     FileStatus:
       example:

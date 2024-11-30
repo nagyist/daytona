@@ -1880,6 +1880,98 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/workspace/{workspaceId}/{projectId}/toolbox/execute": {
+            "post": {
+                "description": "Execute command inside workspace project",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "summary": "Execute command inside workspace project",
+                "operationId": "ExecuteCommand",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Workspace ID or Name",
+                        "name": "workspaceId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project Id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Execute command",
+                        "name": "command",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ExecuteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ExecuteResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/workspace/{workspaceId}/{projectId}/toolbox/files": {
+            "get": {
+                "description": "List files inside workspace project",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workspace"
+                ],
+                "summary": "List files inside workspace project",
+                "operationId": "ListFiles",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Workspace ID or Name",
+                        "name": "workspaceId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project Id",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Path",
+                        "name": "path",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/FileInfo"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2211,6 +2303,28 @@ const docTemplate = `{
                 }
             }
         },
+        "ExecuteRequest": {
+            "type": "object",
+            "required": [
+                "command"
+            ],
+            "properties": {
+                "command": {
+                    "type": "string"
+                }
+            }
+        },
+        "ExecuteResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "string"
+                }
+            }
+        },
         "FRPSConfig": {
             "type": "object",
             "required": [
@@ -2227,6 +2341,35 @@ const docTemplate = `{
                 },
                 "protocol": {
                     "type": "string"
+                }
+            }
+        },
+        "FileInfo": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "type": "string"
+                },
+                "isDir": {
+                    "type": "boolean"
+                },
+                "modTime": {
+                    "type": "string"
+                },
+                "mode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
                 }
             }
         },

@@ -4,10 +4,16 @@
 package toolbox
 
 import (
+	"fmt"
+	"net"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct{}
+
+const PORT = 2280
 
 func (t *Server) Start() error {
 	r := gin.Default()
@@ -32,7 +38,15 @@ func (t *Server) Start() error {
 	r.POST("/git/branches", createBranch)
 	r.GET("/git/history", getCommitHistory)
 
-	r.Run(":2280")
+	httpServer := &http.Server{
+		Addr:    fmt.Sprintf(":%d", PORT),
+		Handler: r,
+	}
 
-	return nil
+	listener, err := net.Listen("tcp", httpServer.Addr)
+	if err != nil {
+		return err
+	}
+
+	return httpServer.Serve(listener)
 }
