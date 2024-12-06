@@ -4,9 +4,12 @@
 package docker
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"time"
 
 	"github.com/daytonaio/daytona/pkg/build/detect"
@@ -35,6 +38,33 @@ func (d *DockerClient) StartWorkspace(opts *CreateWorkspaceOptions, daytonaDownl
 		return fmt.Errorf("unknown builder type: %s", builderType)
 	}
 
+	if err != nil {
+		return err
+	}
+
+	if len(opts.ContainerRegistries) == 0 {
+		return d.startDaytonaAgent(opts.Workspace, containerUser, daytonaDownloadUrl, opts.LogWriter)
+	}
+
+	containerRegistriesConfigContent := make(map[string]string)
+	for _, cr := range opts.ContainerRegistries {
+		auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", cr.Username, cr.Password)))
+		containerRegistriesConfigContent[cr.Server] = fmt.Sprintf(`{"auth":"%s"}`, auth)
+	}
+
+	jsonContent, err := json.Marshal(containerRegistriesConfigContent)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.OpenFile("~/.docker/config.json", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		panic(err)
+	}
+
+	defer f.Close()
+
+	_, err = f.Write(jsonContent)
 	if err != nil {
 		return err
 	}
