@@ -63,16 +63,17 @@ func (s *Server) Purge(ctx context.Context, force bool) []error {
 		fmt.Printf("Failed to list targets: %v\n", err)
 	}
 
-	fmt.Println("Purging providers...")
-	err = s.ProviderManager.Purge()
-	if err != nil {
-		s.trackPurgeError(ctx, force, err)
-		if !force {
-			return []error{err}
-		} else {
-			fmt.Printf("Failed to purge providers: %v\n", err)
-		}
-	}
+	// FIXME: todo
+	// fmt.Println("Purging providers...")
+	// err = s.ProviderManager.Purge()
+	// if err != nil {
+	// 	s.trackPurgeError(ctx, force, err)
+	// 	if !force {
+	// 		return []error{err}
+	// 	} else {
+	// 		fmt.Printf("Failed to purge providers: %v\n", err)
+	// 	}
+	// }
 
 	fmt.Println("Purging builds...")
 	errs := s.BuildService.Delete(ctx, nil, force)

@@ -18,8 +18,6 @@ import (
 	"github.com/daytonaio/daytona/pkg/gitprovider"
 	"github.com/daytonaio/daytona/pkg/logs"
 	"github.com/daytonaio/daytona/pkg/models"
-	"github.com/daytonaio/daytona/pkg/provider/manager"
-	"github.com/daytonaio/daytona/pkg/provisioner"
 	"github.com/daytonaio/daytona/pkg/server"
 	"github.com/daytonaio/daytona/pkg/server/apikeys"
 	"github.com/daytonaio/daytona/pkg/server/builds"
@@ -112,8 +110,6 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 	if err != nil {
 		return nil, err
 	}
-
-	providerManager := manager.GetProviderManager(nil)
 
 	headscaleServer := headscale.NewHeadscaleServer(&headscale.HeadscaleServerConfig{
 		ServerId:      c.Id,
@@ -297,10 +293,6 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 
 	headscaleUrl := util.GetFrpcHeadscaleUrl(c.Frps.Protocol, c.Id, c.Frps.Domain)
 
-	provisioner := provisioner.NewProvisioner(provisioner.ProvisionerConfig{
-		ProviderManager: providerManager,
-	})
-
 	targetService := targets.NewTargetService(targets.TargetServiceConfig{
 		TargetStore:         targetStore,
 		TargetMetadataStore: targetMetadataStore,
@@ -324,7 +316,6 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 		ServerApiUrl:     util.GetFrpcApiUrl(c.Frps.Protocol, c.Id, c.Frps.Domain),
 		ServerVersion:    version,
 		ServerUrl:        headscaleUrl,
-		Provisioner:      provisioner,
 		LoggerFactory:    loggerFactory,
 		TelemetryService: telemetryService,
 	})
@@ -399,7 +390,6 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 		ServerUrl:             headscaleUrl,
 		DefaultWorkspaceImage: c.DefaultWorkspaceImage,
 		DefaultWorkspaceUser:  c.DefaultWorkspaceUser,
-		Provisioner:           provisioner,
 		LoggerFactory:         loggerFactory,
 	})
 
@@ -429,7 +419,6 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 		ApiKeyService:              apiKeyService,
 		TargetService:              targetService,
 		GitProviderService:         gitProviderService,
-		ProviderManager:            providerManager,
 		EnvironmentVariableService: envVarService,
 		JobService:                 jobService,
 		RunnerService:              runnerService,

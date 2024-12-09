@@ -1,7 +1,7 @@
 // Copyright 2024 Daytona Platforms Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-package manager
+package providermanager
 
 import (
 	"context"
@@ -16,7 +16,7 @@ import (
 	"github.com/daytonaio/daytona/internal/util"
 	"github.com/daytonaio/daytona/pkg/models"
 	os_util "github.com/daytonaio/daytona/pkg/os"
-	. "github.com/daytonaio/daytona/pkg/provider"
+	"github.com/daytonaio/daytona/pkg/provider"
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/shirou/gopsutil/process"
@@ -39,8 +39,8 @@ var ProviderHandshakeConfig = plugin.HandshakeConfig{
 
 type IProviderManager interface {
 	DownloadProvider(ctx context.Context, downloadUrls map[os_util.OperatingSystem]string, providerName string) (string, error)
-	GetProvider(name string) (*Provider, error)
-	GetProviders() map[string]Provider
+	GetProvider(name string) (*provider.Provider, error)
+	GetProviders() map[string]provider.Provider
 	GetProvidersManifest() (*ProvidersManifest, error)
 	RegisterProvider(pluginPath string, manualInstall bool) error
 	TerminateProviderProcesses(providersBasePath string) error
@@ -52,6 +52,7 @@ type ProviderManagerConfig struct {
 	GetTargetConfigMap       func(ctx context.Context) (map[string]*models.TargetConfig, error)
 	CreateTargetConfig       func(ctx context.Context, name, options string, providerInfo models.ProviderInfo) error
 	CreateProviderNetworkKey func(ctx context.Context, providerName string) (string, error)
+	RunnerId                 string
 	DaytonaDownloadUrl       string
 	ServerUrl                string
 	ServerVersion            string
@@ -77,6 +78,7 @@ func GetProviderManager(config *ProviderManagerConfig) *ProviderManager {
 
 		providerManager = &ProviderManager{
 			pluginRefs:               make(map[string]*pluginRef),
+			runnerId:                 config.RunnerId,
 			daytonaDownloadUrl:       config.DaytonaDownloadUrl,
 			serverUrl:                config.ServerUrl,
 			serverVersion:            config.ServerVersion,
@@ -96,6 +98,7 @@ func GetProviderManager(config *ProviderManagerConfig) *ProviderManager {
 }
 
 type ProviderManager struct {
+	runnerId                 string
 	pluginRefs               map[string]*pluginRef
 	getTargetConfigMap       func(ctx context.Context) (map[string]*models.TargetConfig, error)
 	createTargetConfig       func(ctx context.Context, name, options string, providerInfo models.ProviderInfo) error
@@ -111,7 +114,7 @@ type ProviderManager struct {
 	baseDir                  string
 }
 
-func (m *ProviderManager) GetProvider(name string) (*Provider, error) {
+func (m *ProviderManager) GetProvider(name string) (*provider.Provider, error) {
 	pluginRef, ok := m.pluginRefs[name]
 	if !ok {
 		return nil, errors.New("provider not found")
@@ -134,8 +137,8 @@ func (m *ProviderManager) GetProvider(name string) (*Provider, error) {
 	return p, nil
 }
 
-func (m *ProviderManager) GetProviders() map[string]Provider {
-	providers := make(map[string]Provider)
+func (m *ProviderManager) GetProviders() map[string]provider.Provider {
+	providers := make(map[string]provider.Provider)
 	for name := range m.pluginRefs {
 		provider, err := m.GetProvider(name)
 		if err != nil {
@@ -191,6 +194,7 @@ func (m *ProviderManager) RegisterProvider(pluginPath string, manualInstall bool
 
 			err = m.createTargetConfig(ctx, targetConfig.Name, targetConfig.Options,
 				models.ProviderInfo{
+					RunnerId:        m.runnerId,
 					Name:            providerInfo.Name,
 					Version:         providerInfo.Version,
 					Label:           providerInfo.Label,
@@ -305,7 +309,7 @@ func (m *ProviderManager) initializeProvider(pluginPath string) (*pluginRef, err
 	})
 
 	pluginMap := map[string]plugin.Plugin{}
-	pluginMap[pluginName] = &ProviderPlugin{}
+	pluginMap[pluginName] = &provider.ProviderPlugin{}
 
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: ProviderHandshakeConfig,
@@ -327,7 +331,7 @@ func (m *ProviderManager) initializeProvider(pluginPath string) (*pluginRef, err
 		return nil, errors.New("failed to create network key: " + err.Error())
 	}
 
-	_, err = (*p).Initialize(InitializeProviderRequest{
+	_, err = (*p).Initialize(provider.InitializeProviderRequest{
 		BasePath:           pluginBasePath,
 		DaytonaDownloadUrl: m.daytonaDownloadUrl,
 		DaytonaVersion:     m.serverVersion,
@@ -349,7 +353,7 @@ func (m *ProviderManager) initializeProvider(pluginPath string) (*pluginRef, err
 	}, nil
 }
 
-func (m *ProviderManager) dispenseProvider(client *plugin.Client, name string) (*Provider, error) {
+func (m *ProviderManager) dispenseProvider(client *plugin.Client, name string) (*provider.Provider, error) {
 	rpcClient, err := client.Client()
 	if err != nil {
 		return nil, err
@@ -360,7 +364,7 @@ func (m *ProviderManager) dispenseProvider(client *plugin.Client, name string) (
 		return nil, err
 	}
 
-	provider, ok := raw.(Provider)
+	provider, ok := raw.(provider.Provider)
 	if !ok {
 		return nil, errors.New("unexpected type from plugin")
 	}

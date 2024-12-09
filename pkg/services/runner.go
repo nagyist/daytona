@@ -16,6 +16,7 @@ type IRunnerService interface {
 	ListRunners(ctx context.Context) ([]*RunnerDTO, error)
 	SetRunnerMetadata(ctx context.Context, runnerId string, metadata *models.RunnerMetadata) error
 	RemoveRunner(ctx context.Context, runnerId string) error
+	ListProviders(ctx context.Context) ([]models.ProviderInfo, error)
 }
 
 type RunnerDTO struct {

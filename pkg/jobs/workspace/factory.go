@@ -9,7 +9,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/jobs"
 	"github.com/daytonaio/daytona/pkg/logs"
 	"github.com/daytonaio/daytona/pkg/models"
-	"github.com/daytonaio/daytona/pkg/provisioner"
+	"github.com/daytonaio/daytona/pkg/runner/providermanager"
 	"github.com/daytonaio/daytona/pkg/telemetry"
 )
 
@@ -27,11 +27,12 @@ type WorkspaceJobFactoryConfig struct {
 	FindContainerRegistry            func(ctx context.Context, image string, envVars map[string]string) *models.ContainerRegistry
 	FindGitProviderConfig            func(ctx context.Context, id string) (*models.GitProviderConfig, error)
 	GetWorkspaceEnvironmentVariables func(ctx context.Context, w *models.Workspace) (map[string]string, error)
+	UpdateWorkspaceProviderMetadata  func(ctx context.Context, workspaceId, providerMetadata string) error
 	TrackTelemetryEvent              func(event telemetry.ServerEvent, clientId string, props map[string]interface{}) error
 
-	LoggerFactory logs.LoggerFactory
-	Provisioner   provisioner.IProvisioner
-	BuilderImage  string
+	LoggerFactory   logs.LoggerFactory
+	ProviderManager providermanager.IProviderManager
+	BuilderImage    string
 }
 
 func NewWorkspaceJobFactory(config WorkspaceJobFactoryConfig) IWorkspaceJobFactory {
@@ -49,9 +50,10 @@ func (f *WorkspaceJobFactory) Create(job models.Job) jobs.IJob {
 		findContainerRegistry:            f.config.FindContainerRegistry,
 		findGitProviderConfig:            f.config.FindGitProviderConfig,
 		getWorkspaceEnvironmentVariables: f.config.GetWorkspaceEnvironmentVariables,
+		updateWorkspaceProviderMetadata:  f.config.UpdateWorkspaceProviderMetadata,
 		trackTelemetryEvent:              f.config.TrackTelemetryEvent,
 		loggerFactory:                    f.config.LoggerFactory,
-		provisioner:                      f.config.Provisioner,
+		providerManager:                  f.config.ProviderManager,
 		builderImage:                     f.config.BuilderImage,
 	}
 }

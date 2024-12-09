@@ -12,6 +12,7 @@ import (
 
 type RunnerMetadataStore interface {
 	IStore
+	List(ctx context.Context) ([]*models.RunnerMetadata, error)
 	Find(ctx context.Context, runnerId string) (*models.RunnerMetadata, error)
 	Save(ctx context.Context, metadata *models.RunnerMetadata) error
 	Delete(ctx context.Context, metadata *models.RunnerMetadata) error

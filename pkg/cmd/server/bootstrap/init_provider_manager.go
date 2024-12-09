@@ -12,7 +12,7 @@ import (
 	"github.com/daytonaio/daytona/internal/util"
 	"github.com/daytonaio/daytona/pkg/db"
 	"github.com/daytonaio/daytona/pkg/models"
-	"github.com/daytonaio/daytona/pkg/provider/manager"
+	"github.com/daytonaio/daytona/pkg/runner/providermanager"
 	"github.com/daytonaio/daytona/pkg/server"
 	"github.com/daytonaio/daytona/pkg/server/headscale"
 	"github.com/daytonaio/daytona/pkg/server/targetconfigs"
@@ -60,7 +60,7 @@ func InitProviderManager(c *server.Config, configDir string) error {
 		TargetConfigStore: targetConfigStore,
 	})
 
-	_ = manager.GetProviderManager(&manager.ProviderManagerConfig{
+	_ = providermanager.GetProviderManager(&providermanager.ProviderManagerConfig{
 		LogsDir:            targetLogsDir,
 		ApiUrl:             util.GetFrpcApiUrl(c.Frps.Protocol, c.Id, c.Frps.Domain),
 		DaytonaDownloadUrl: getDaytonaScriptUrl(c),

@@ -10,7 +10,6 @@ import (
 	"github.com/daytonaio/daytona/pkg/gitprovider"
 	"github.com/daytonaio/daytona/pkg/logs"
 	"github.com/daytonaio/daytona/pkg/models"
-	"github.com/daytonaio/daytona/pkg/provisioner"
 	"github.com/daytonaio/daytona/pkg/services"
 	"github.com/daytonaio/daytona/pkg/stores"
 	"github.com/daytonaio/daytona/pkg/telemetry"
@@ -35,7 +34,6 @@ type WorkspaceServiceConfig struct {
 	ServerApiUrl          string
 	ServerUrl             string
 	ServerVersion         string
-	Provisioner           provisioner.IProvisioner
 	DefaultWorkspaceImage string
 	DefaultWorkspaceUser  string
 }
@@ -61,7 +59,6 @@ func NewWorkspaceService(config WorkspaceServiceConfig) services.IWorkspaceServi
 		serverVersion:         config.ServerVersion,
 		defaultWorkspaceImage: config.DefaultWorkspaceImage,
 		defaultWorkspaceUser:  config.DefaultWorkspaceUser,
-		provisioner:           config.Provisioner,
 		loggerFactory:         config.LoggerFactory,
 	}
 }
@@ -81,7 +78,6 @@ type WorkspaceService struct {
 	createJob              func(ctx context.Context, workspaceId string, action models.JobAction) error
 	trackTelemetryEvent    func(event telemetry.ServerEvent, clientId string, props map[string]interface{}) error
 
-	provisioner           provisioner.IProvisioner
 	serverApiUrl          string
 	serverUrl             string
 	serverVersion         string
@@ -92,4 +88,15 @@ type WorkspaceService struct {
 
 func (s *WorkspaceService) GetWorkspaceLogReader(ctx context.Context, workspaceId string) (io.Reader, error) {
 	return s.loggerFactory.CreateWorkspaceLogReader(workspaceId)
+}
+
+func (s *WorkspaceService) UpdateWorkspaceProviderMetadata(ctx context.Context, workspaceId, metadata string) error {
+	w, err := s.workspaceStore.Find(ctx, workspaceId)
+	if err != nil {
+		return err
+	}
+
+	w.ProviderMetadata = &metadata
+
+	return s.workspaceStore.Save(ctx, w)
 }

@@ -4,13 +4,8 @@
 package server
 
 import (
-	"os"
-	"os/signal"
-
-	"github.com/daytonaio/daytona/pkg/provider/manager"
 	"github.com/daytonaio/daytona/pkg/services"
 	"github.com/daytonaio/daytona/pkg/telemetry"
-	"github.com/hashicorp/go-plugin"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -27,7 +22,6 @@ type ServerInstanceConfig struct {
 	TargetService              services.ITargetService
 	ApiKeyService              services.IApiKeyService
 	GitProviderService         services.IGitProviderService
-	ProviderManager            manager.IProviderManager
 	EnvironmentVariableService services.IEnvironmentVariableService
 	JobService                 services.IJobService
 	RunnerService              services.IRunnerService
@@ -58,7 +52,6 @@ func GetInstance(serverConfig *ServerInstanceConfig) *Server {
 			TargetService:              serverConfig.TargetService,
 			ApiKeyService:              serverConfig.ApiKeyService,
 			GitProviderService:         serverConfig.GitProviderService,
-			ProviderManager:            serverConfig.ProviderManager,
 			EnvironmentVariableService: serverConfig.EnvironmentVariableService,
 			JobService:                 serverConfig.JobService,
 			RunnerService:              serverConfig.RunnerService,
@@ -82,7 +75,6 @@ type Server struct {
 	TargetService              services.ITargetService
 	ApiKeyService              services.IApiKeyService
 	GitProviderService         services.IGitProviderService
-	ProviderManager            manager.IProviderManager
 	EnvironmentVariableService services.IEnvironmentVariableService
 	JobService                 services.IJobService
 	RunnerService              services.IRunnerService
@@ -94,27 +86,7 @@ func (s *Server) Initialize() error {
 }
 
 func (s *Server) Start() error {
-	log.Info("Starting Daytona server")
+	log.Info("Daytona server started")
 
-	go func() {
-		interruptChannel := make(chan os.Signal, 1)
-		signal.Notify(interruptChannel, os.Interrupt)
-
-		for range interruptChannel {
-			plugin.CleanupClients()
-		}
-	}()
-
-	// Terminate orphaned provider processes
-	err := s.ProviderManager.TerminateProviderProcesses(s.config.ProvidersDir)
-	if err != nil {
-		log.Errorf("Failed to terminate orphaned provider processes: %s", err)
-	}
-
-	err = s.downloadDefaultProviders()
-	if err != nil {
-		return err
-	}
-
-	return s.registerProviders()
+	return nil
 }

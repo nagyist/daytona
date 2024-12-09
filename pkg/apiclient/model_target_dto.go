@@ -24,7 +24,6 @@ type TargetDTO struct {
 	Default        bool              `json:"default"`
 	EnvVars        map[string]string `json:"envVars"`
 	Id             string            `json:"id"`
-	Info           *TargetInfo       `json:"info,omitempty"`
 	LastJob        *Job              `json:"lastJob,omitempty"`
 	Metadata       *TargetMetadata   `json:"metadata,omitempty"`
 	Name           string            `json:"name"`
@@ -131,38 +130,6 @@ func (o *TargetDTO) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *TargetDTO) SetId(v string) {
 	o.Id = v
-}
-
-// GetInfo returns the Info field value if set, zero value otherwise.
-func (o *TargetDTO) GetInfo() TargetInfo {
-	if o == nil || IsNil(o.Info) {
-		var ret TargetInfo
-		return ret
-	}
-	return *o.Info
-}
-
-// GetInfoOk returns a tuple with the Info field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *TargetDTO) GetInfoOk() (*TargetInfo, bool) {
-	if o == nil || IsNil(o.Info) {
-		return nil, false
-	}
-	return o.Info, true
-}
-
-// HasInfo returns a boolean if a field has been set.
-func (o *TargetDTO) HasInfo() bool {
-	if o != nil && !IsNil(o.Info) {
-		return true
-	}
-
-	return false
-}
-
-// SetInfo gets a reference to the given TargetInfo and assigns it to the Info field.
-func (o *TargetDTO) SetInfo(v TargetInfo) {
-	o.Info = &v
 }
 
 // GetLastJob returns the LastJob field value if set, zero value otherwise.
@@ -362,9 +329,6 @@ func (o TargetDTO) ToMap() (map[string]interface{}, error) {
 	toSerialize["default"] = o.Default
 	toSerialize["envVars"] = o.EnvVars
 	toSerialize["id"] = o.Id
-	if !IsNil(o.Info) {
-		toSerialize["info"] = o.Info
-	}
 	if !IsNil(o.LastJob) {
 		toSerialize["lastJob"] = o.LastJob
 	}

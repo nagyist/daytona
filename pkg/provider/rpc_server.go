@@ -4,7 +4,6 @@
 package provider
 
 import (
-	"github.com/daytonaio/daytona/pkg/models"
 	"github.com/daytonaio/daytona/pkg/provider/util"
 )
 
@@ -76,13 +75,13 @@ func (m *ProviderRPCServer) DestroyTarget(arg *TargetRequest, resp *util.Empty) 
 	return err
 }
 
-func (m *ProviderRPCServer) GetTargetInfo(arg *TargetRequest, resp *models.TargetInfo) error {
-	info, err := m.Impl.GetTargetInfo(arg)
+func (m *ProviderRPCServer) GetTargetProviderMetadata(arg *TargetRequest, resp *string) error {
+	metadata, err := m.Impl.GetTargetProviderMetadata(arg)
 	if err != nil {
 		return err
 	}
 
-	*resp = *info
+	*resp = metadata
 	return nil
 }
 
@@ -106,12 +105,12 @@ func (m *ProviderRPCServer) DestroyWorkspace(arg *WorkspaceRequest, resp *util.E
 	return err
 }
 
-func (m *ProviderRPCServer) GetWorkspaceInfo(arg *WorkspaceRequest, resp *models.WorkspaceInfo) error {
-	info, err := m.Impl.GetWorkspaceInfo(arg)
+func (m *ProviderRPCServer) GetWorkspaceProviderMetadata(arg *WorkspaceRequest, resp *string) error {
+	metadata, err := m.Impl.GetWorkspaceProviderMetadata(arg)
 	if err != nil {
 		return err
 	}
 
-	*resp = *info
+	*resp = metadata
 	return nil
 }

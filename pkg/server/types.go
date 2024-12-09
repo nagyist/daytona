@@ -34,6 +34,7 @@ type NetworkKey struct {
 } // @name NetworkKey
 
 type Config struct {
+	// TODO: Move to runner config
 	ProvidersDir              string         `json:"providersDir" validate:"required"`
 	RegistryUrl               string         `json:"registryUrl" validate:"required"`
 	Id                        string         `json:"id" validate:"required"`

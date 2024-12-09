@@ -25,7 +25,14 @@ type TargetConfigAPIService service
 type ApiAddTargetConfigRequest struct {
 	ctx          context.Context
 	ApiService   *TargetConfigAPIService
+	showOptions  *bool
 	targetConfig *AddTargetConfigDTO
+}
+
+// Show target config options
+func (r ApiAddTargetConfigRequest) ShowOptions(showOptions bool) ApiAddTargetConfigRequest {
+	r.showOptions = &showOptions
+	return r
 }
 
 // Target config to add
@@ -74,10 +81,14 @@ func (a *TargetConfigAPIService) AddTargetConfigExecute(r ApiAddTargetConfigRequ
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.showOptions == nil {
+		return localVarReturnValue, nil, reportError("showOptions is required and must be specified")
+	}
 	if r.targetConfig == nil {
 		return localVarReturnValue, nil, reportError("targetConfig is required and must be specified")
 	}
 
+	parameterAddToHeaderOrQuery(localVarQueryParams, "showOptions", r.showOptions, "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -149,8 +160,15 @@ func (a *TargetConfigAPIService) AddTargetConfigExecute(r ApiAddTargetConfigRequ
 }
 
 type ApiListTargetConfigsRequest struct {
-	ctx        context.Context
-	ApiService *TargetConfigAPIService
+	ctx         context.Context
+	ApiService  *TargetConfigAPIService
+	showOptions *bool
+}
+
+// Show target config options
+func (r ApiListTargetConfigsRequest) ShowOptions(showOptions bool) ApiListTargetConfigsRequest {
+	r.showOptions = &showOptions
+	return r
 }
 
 func (r ApiListTargetConfigsRequest) Execute() ([]TargetConfig, *http.Response, error) {
@@ -193,7 +211,11 @@ func (a *TargetConfigAPIService) ListTargetConfigsExecute(r ApiListTargetConfigs
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.showOptions == nil {
+		return localVarReturnValue, nil, reportError("showOptions is required and must be specified")
+	}
 
+	parameterAddToHeaderOrQuery(localVarQueryParams, "showOptions", r.showOptions, "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

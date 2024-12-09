@@ -410,18 +410,6 @@ definitions:
     - name
     - username
     type: object
-  InstallProviderRequest:
-    properties:
-      downloadUrls:
-        additionalProperties:
-          type: string
-        type: object
-      name:
-        type: string
-    required:
-    - downloadUrls
-    - name
-    type: object
   Job:
     properties:
       action:
@@ -529,18 +517,6 @@ definitions:
     - id
     - retention
     - workspaceTemplateName
-    type: object
-  Provider:
-    properties:
-      label:
-        type: string
-      name:
-        type: string
-      version:
-        type: string
-    required:
-    - name
-    - version
     type: object
   RegisterRunnerDTO:
     properties:
@@ -706,6 +682,8 @@ definitions:
     type: object
   SetTargetMetadata:
     properties:
+      providerMetadata:
+        type: string
       uptime:
         type: integer
     required:
@@ -715,6 +693,8 @@ definitions:
     properties:
       gitStatus:
         $ref: '#/definitions/GitStatus'
+      providerMetadata:
+        type: string
       uptime:
         type: integer
     required:
@@ -801,42 +781,6 @@ definitions:
     - options
     - providerInfo
     type: object
-  TargetConfigManifest:
-    additionalProperties:
-      $ref: '#/definitions/TargetConfigProperty'
-    type: object
-  TargetConfigProperty:
-    properties:
-      defaultValue:
-        description: |-
-          DefaultValue is converted into the appropriate type based on the Type
-          If the property is a FilePath, the DefaultValue is a path to a directory
-        type: string
-      description:
-        description: Brief description of the property
-        type: string
-      disabledPredicate:
-        description: |-
-          A regex string matched with the name of the target config to determine if the property should be disabled
-          If the regex matches the target config name, the property will be disabled
-          E.g. "^local$" will disable the property for the local target
-        type: string
-      inputMasked:
-        type: boolean
-      options:
-        description: Options is only used if the Type is TargetConfigPropertyTypeOption
-        items:
-          type: string
-        type: array
-      suggestions:
-        description: Suggestions is an optional list of auto-complete values to assist
-          the user while filling the field
-        items:
-          type: string
-        type: array
-      type:
-        $ref: '#/definitions/provider.TargetConfigPropertyType'
-    type: object
   TargetDTO:
     properties:
       default:
@@ -847,8 +791,6 @@ definitions:
         type: object
       id:
         type: string
-      info:
-        $ref: '#/definitions/TargetInfo'
       lastJob:
         $ref: '#/definitions/Job'
       metadata:
@@ -875,17 +817,10 @@ definitions:
     - targetConfigId
     - workspaces
     type: object
-  TargetInfo:
-    properties:
-      name:
-        type: string
-      providerMetadata:
-        type: string
-    required:
-    - name
-    type: object
   TargetMetadata:
     properties:
+      providerMetadata:
+        type: string
       targetId:
         type: string
       updatedAt:
@@ -934,6 +869,8 @@ definitions:
         $ref: '#/definitions/WorkspaceMetadata'
       name:
         type: string
+      providerMetadata:
+        type: string
       repository:
         $ref: '#/definitions/GitRepository'
       target:
@@ -966,13 +903,13 @@ definitions:
         type: string
       image:
         type: string
-      info:
-        $ref: '#/definitions/WorkspaceInfo'
       lastJob:
         $ref: '#/definitions/Job'
       metadata:
         $ref: '#/definitions/WorkspaceMetadata'
       name:
+        type: string
+      providerMetadata:
         type: string
       repository:
         $ref: '#/definitions/GitRepository'
@@ -994,24 +931,6 @@ definitions:
     - target
     - targetId
     - user
-    type: object
-  WorkspaceInfo:
-    properties:
-      created:
-        type: string
-      isRunning:
-        type: boolean
-      name:
-        type: string
-      providerMetadata:
-        type: string
-      targetId:
-        type: string
-    required:
-    - created
-    - isRunning
-    - name
-    - targetId
     type: object
   WorkspaceMetadata:
     properties:
@@ -1133,22 +1052,20 @@ definitions:
     - ResourceStateNamePendingForcedDelete
     - ResourceStateNameDeleting
     - ResourceStateNameDeleted
-  provider.TargetConfigPropertyType:
-    enum:
-    - string
-    - option
-    - boolean
-    - int
-    - float
-    - file-path
-    type: string
-    x-enum-varnames:
-    - TargetConfigPropertyTypeString
-    - TargetConfigPropertyTypeOption
-    - TargetConfigPropertyTypeBoolean
-    - TargetConfigPropertyTypeInt
-    - TargetConfigPropertyTypeFloat
-    - TargetConfigPropertyTypeFilePath
+  provider.ProviderInfo:
+    properties:
+      agentlessTarget:
+        type: boolean
+      label:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+    required:
+    - name
+    - version
+    type: object
 host: localhost:3986
 info:
   contact: {}
@@ -1727,64 +1644,9 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/Provider'
+              $ref: '#/definitions/provider.ProviderInfo'
             type: array
       summary: List providers
-      tags:
-      - provider
-  /provider/{provider}/target-config-manifest:
-    get:
-      description: Get provider target config manifest
-      operationId: GetTargetConfigManifest
-      parameters:
-      - description: Provider name
-        in: path
-        name: provider
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/TargetConfigManifest'
-      summary: Get provider target config manifest
-      tags:
-      - provider
-  /provider/{provider}/uninstall:
-    post:
-      consumes:
-      - application/json
-      description: Uninstall a provider
-      operationId: UninstallProvider
-      parameters:
-      - description: Provider to uninstall
-        in: path
-        name: provider
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Uninstall a provider
-      tags:
-      - provider
-  /provider/install:
-    post:
-      consumes:
-      - application/json
-      description: Install a provider
-      operationId: InstallProvider
-      parameters:
-      - description: Provider to install
-        in: body
-        name: provider
-        required: true
-        schema:
-          $ref: '#/definitions/InstallProviderRequest'
-      responses:
-        "200":
-          description: OK
-      summary: Install a provider
       tags:
       - provider
   /runner:
@@ -1945,9 +1807,10 @@ paths:
       description: List targets
       operationId: ListTargets
       parameters:
-      - description: Verbose
+      - description: Show target config options
         in: query
-        name: verbose
+        name: showOptions
+        required: true
         type: boolean
       produces:
       - application/json
@@ -1985,6 +1848,12 @@ paths:
     get:
       description: List target configs
       operationId: ListTargetConfigs
+      parameters:
+      - description: Show target config options
+        in: query
+        name: showOptions
+        required: true
+        type: boolean
       produces:
       - application/json
       responses:
@@ -2007,6 +1876,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/AddTargetConfigDTO'
+      - description: Show target config options
+        in: query
+        name: showOptions
+        required: true
+        type: boolean
       responses:
         "200":
           description: OK
@@ -2060,9 +1934,10 @@ paths:
         name: targetId
         required: true
         type: string
-      - description: Verbose
+      - description: Show target config options
         in: query
-        name: verbose
+        name: showOptions
+        required: true
         type: boolean
       produces:
       - application/json
@@ -2148,11 +2023,6 @@ paths:
     get:
       description: List workspaces
       operationId: ListWorkspaces
-      parameters:
-      - description: Verbose
-        in: query
-        name: verbose
-        type: boolean
       produces:
       - application/json
       responses:
@@ -2454,10 +2324,6 @@ paths:
         name: workspaceId
         required: true
         type: string
-      - description: Verbose
-        in: query
-        name: verbose
-        type: boolean
       produces:
       - application/json
       responses:

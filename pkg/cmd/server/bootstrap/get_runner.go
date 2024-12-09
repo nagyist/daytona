@@ -17,19 +17,17 @@ import (
 	"github.com/daytonaio/daytona/pkg/jobs/workspace"
 	"github.com/daytonaio/daytona/pkg/logs"
 	"github.com/daytonaio/daytona/pkg/models"
-	"github.com/daytonaio/daytona/pkg/provider/manager"
-	"github.com/daytonaio/daytona/pkg/provisioner"
-	"github.com/daytonaio/daytona/pkg/runners"
+	"github.com/daytonaio/daytona/pkg/runner/providermanager"
 	"github.com/daytonaio/daytona/pkg/server"
 	"github.com/daytonaio/daytona/pkg/services"
 	"github.com/daytonaio/daytona/pkg/stores"
 	"github.com/daytonaio/daytona/pkg/telemetry"
 	"github.com/docker/docker/client"
 
-	"github.com/daytonaio/daytona/pkg/runners/runner"
+	"github.com/daytonaio/daytona/pkg/runner"
 )
 
-func GetJobRunner(c *server.Config, configDir string, version string, telemetryService telemetry.TelemetryService) (runners.IJobRunner, error) {
+func GetRunner(c *server.Config, configDir string, version string, telemetryService telemetry.TelemetryService) (runner.IRunner, error) {
 	jobService := server.GetInstance(nil).JobService
 
 	workspaceJobFactory, err := GetWorkspaceJobFactory(c, configDir, version, telemetryService)
@@ -47,7 +45,7 @@ func GetJobRunner(c *server.Config, configDir string, version string, telemetryS
 		return nil, err
 	}
 
-	return runner.NewJobRunner(runner.JobRunnerConfig{
+	return runner.NewRunner(runner.RunnerConfig{
 		ListPendingJobs: func(ctx context.Context) ([]*models.Job, error) {
 			return jobService.List(ctx, &stores.JobFilter{
 				States: &[]models.JobState{models.JobStatePending},
@@ -81,11 +79,7 @@ func GetWorkspaceJobFactory(c *server.Config, configDir string, version string, 
 	}
 	loggerFactory := logs.NewLoggerFactory(&targetLogsDir, &buildLogsDir)
 
-	providerManager := manager.GetProviderManager(nil)
-
-	provisioner := provisioner.NewProvisioner(provisioner.ProvisionerConfig{
-		ProviderManager: providerManager,
-	})
+	providerManager := providermanager.GetProviderManager(nil)
 
 	targetService := server.GetInstance(nil).TargetService
 
@@ -93,7 +87,7 @@ func GetWorkspaceJobFactory(c *server.Config, configDir string, version string, 
 
 	return workspace.NewWorkspaceJobFactory(workspace.WorkspaceJobFactoryConfig{
 		FindWorkspace: func(ctx context.Context, workspaceId string) (*models.Workspace, error) {
-			workspaceDto, err := workspaceService.GetWorkspace(ctx, workspaceId, services.WorkspaceRetrievalParams{Verbose: false})
+			workspaceDto, err := workspaceService.GetWorkspace(ctx, workspaceId, services.WorkspaceRetrievalParams{})
 			if err != nil {
 				return nil, err
 			}
@@ -106,6 +100,7 @@ func GetWorkspaceJobFactory(c *server.Config, configDir string, version string, 
 			}
 			return &targetDto.Target, nil
 		},
+		UpdateWorkspaceProviderMetadata: workspaceService.UpdateWorkspaceProviderMetadata,
 		FindContainerRegistry: func(ctx context.Context, image string, envVars map[string]string) *models.ContainerRegistry {
 			return services.EnvironmentVariables(envVars).FindContainerRegistryByImageName(image)
 		},
@@ -123,9 +118,9 @@ func GetWorkspaceJobFactory(c *server.Config, configDir string, version string, 
 		TrackTelemetryEvent: func(event telemetry.ServerEvent, clientId string, props map[string]interface{}) error {
 			return telemetryService.TrackServerEvent(event, clientId, props)
 		},
-		LoggerFactory: loggerFactory,
-		Provisioner:   provisioner,
-		BuilderImage:  c.BuilderImage,
+		LoggerFactory:   loggerFactory,
+		ProviderManager: providerManager,
+		BuilderImage:    c.BuilderImage,
 	}), nil
 }
 
@@ -140,11 +135,7 @@ func GetTargetJobFactory(c *server.Config, configDir string, version string, tel
 	}
 	loggerFactory := logs.NewLoggerFactory(&targetLogsDir, &buildLogsDir)
 
-	providerManager := manager.GetProviderManager(nil)
-
-	provisioner := provisioner.NewProvisioner(provisioner.ProvisionerConfig{
-		ProviderManager: providerManager,
-	})
+	providerManager := providermanager.GetProviderManager(nil)
 
 	targetService := server.GetInstance(nil).TargetService
 
@@ -159,11 +150,12 @@ func GetTargetJobFactory(c *server.Config, configDir string, version string, tel
 		HandleSuccessfulCreation: func(ctx context.Context, targetId string) error {
 			return targetService.HandleSuccessfulCreation(ctx, targetId)
 		},
+		UpdateTargetProviderMetadata: targetService.UpdateTargetProviderMetadata,
 		TrackTelemetryEvent: func(event telemetry.ServerEvent, clientId string, props map[string]interface{}) error {
 			return telemetryService.TrackServerEvent(event, clientId, props)
 		},
-		LoggerFactory: loggerFactory,
-		Provisioner:   provisioner,
+		LoggerFactory:   loggerFactory,
+		ProviderManager: providerManager,
 	}), nil
 }
 

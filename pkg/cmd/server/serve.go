@@ -131,7 +131,7 @@ var ServeCmd = &cobra.Command{
 		}
 
 		log.Info("Starting job runner...")
-		jobRunner, err := bootstrap.GetJobRunner(c, configDir, internal.Version, telemetryService)
+		jobRunner, err := bootstrap.GetRunner(c, configDir, internal.Version, telemetryService)
 		if err != nil {
 			return err
 		}

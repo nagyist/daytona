@@ -110,10 +110,7 @@ Class | Method | HTTP request | Description
 *PrebuildAPI* | [**ListPrebuildsForWorkspaceTemplate**](docs/PrebuildAPI.md#listprebuildsforworkspacetemplate) | **Get** /workspace-template/{templateName}/prebuild | List prebuilds for workspace template
 *PrebuildAPI* | [**ProcessGitEvent**](docs/PrebuildAPI.md#processgitevent) | **Post** /workspace-template/prebuild/process-git-event | ProcessGitEvent
 *PrebuildAPI* | [**SetPrebuild**](docs/PrebuildAPI.md#setprebuild) | **Put** /workspace-template/{templateName}/prebuild | Set prebuild
-*ProviderAPI* | [**GetTargetConfigManifest**](docs/ProviderAPI.md#gettargetconfigmanifest) | **Get** /provider/{provider}/target-config-manifest | Get provider target config manifest
-*ProviderAPI* | [**InstallProvider**](docs/ProviderAPI.md#installprovider) | **Post** /provider/install | Install a provider
 *ProviderAPI* | [**ListProviders**](docs/ProviderAPI.md#listproviders) | **Get** /provider | List providers
-*ProviderAPI* | [**UninstallProvider**](docs/ProviderAPI.md#uninstallprovider) | **Post** /provider/{provider}/uninstall | Uninstall a provider
 *RunnerAPI* | [**GetRunner**](docs/RunnerAPI.md#getrunner) | **Get** /runner/{runnerId} | Get a runner
 *RunnerAPI* | [**ListRunners**](docs/RunnerAPI.md#listrunners) | **Get** /runner | List runners
 *RunnerAPI* | [**RegisterRunner**](docs/RunnerAPI.md#registerrunner) | **Post** /runner | Register a runner
@@ -176,7 +173,6 @@ Class | Method | HTTP request | Description
  - [GitRepository](docs/GitRepository.md)
  - [GitStatus](docs/GitStatus.md)
  - [GitUser](docs/GitUser.md)
- - [InstallProviderRequest](docs/InstallProviderRequest.md)
  - [Job](docs/Job.md)
  - [JobState](docs/JobState.md)
  - [LogFileConfig](docs/LogFileConfig.md)
@@ -186,8 +182,7 @@ Class | Method | HTTP request | Description
  - [NetworkKey](docs/NetworkKey.md)
  - [PrebuildConfig](docs/PrebuildConfig.md)
  - [PrebuildDTO](docs/PrebuildDTO.md)
- - [Provider](docs/Provider.md)
- - [ProviderTargetConfigPropertyType](docs/ProviderTargetConfigPropertyType.md)
+ - [ProviderProviderInfo](docs/ProviderProviderInfo.md)
  - [RegisterRunnerDTO](docs/RegisterRunnerDTO.md)
  - [RepositoryUrl](docs/RepositoryUrl.md)
  - [ResourceState](docs/ResourceState.md)
@@ -203,14 +198,11 @@ Class | Method | HTTP request | Description
  - [Status](docs/Status.md)
  - [Target](docs/Target.md)
  - [TargetConfig](docs/TargetConfig.md)
- - [TargetConfigProperty](docs/TargetConfigProperty.md)
  - [TargetDTO](docs/TargetDTO.md)
- - [TargetInfo](docs/TargetInfo.md)
  - [TargetMetadata](docs/TargetMetadata.md)
  - [TargetProviderInfo](docs/TargetProviderInfo.md)
  - [Workspace](docs/Workspace.md)
  - [WorkspaceDTO](docs/WorkspaceDTO.md)
- - [WorkspaceInfo](docs/WorkspaceInfo.md)
  - [WorkspaceMetadata](docs/WorkspaceMetadata.md)
  - [WorkspaceTemplate](docs/WorkspaceTemplate.md)
 

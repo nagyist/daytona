@@ -6,7 +6,6 @@ package provider
 import (
 	"net/rpc"
 
-	"github.com/daytonaio/daytona/pkg/models"
 	"github.com/daytonaio/daytona/pkg/provider/util"
 )
 
@@ -64,10 +63,10 @@ func (m *ProviderRPCClient) DestroyTarget(targetReq *TargetRequest) (*util.Empty
 	return new(util.Empty), err
 }
 
-func (m *ProviderRPCClient) GetTargetInfo(targetReq *TargetRequest) (*models.TargetInfo, error) {
-	var response models.TargetInfo
-	err := m.client.Call("Plugin.GetTargetInfo", targetReq, &response)
-	return &response, err
+func (m *ProviderRPCClient) GetTargetProviderMetadata(targetReq *TargetRequest) (string, error) {
+	var resp string
+	err := m.client.Call("Plugin.GetTargetProviderMetadata", targetReq, &resp)
+	return resp, err
 }
 
 func (m *ProviderRPCClient) CreateWorkspace(workspaceReq *WorkspaceRequest) (*util.Empty, error) {
@@ -90,8 +89,8 @@ func (m *ProviderRPCClient) DestroyWorkspace(workspaceReq *WorkspaceRequest) (*u
 	return new(util.Empty), err
 }
 
-func (m *ProviderRPCClient) GetWorkspaceInfo(workspaceReq *WorkspaceRequest) (*models.WorkspaceInfo, error) {
-	var resp models.WorkspaceInfo
-	err := m.client.Call("Plugin.GetWorkspaceInfo", workspaceReq, &resp)
-	return &resp, err
+func (m *ProviderRPCClient) GetWorkspaceProviderMetadata(workspaceReq *WorkspaceRequest) (string, error) {
+	var resp string
+	err := m.client.Call("Plugin.GetWorkspaceProviderMetadata", workspaceReq, &resp)
+	return resp, err
 }

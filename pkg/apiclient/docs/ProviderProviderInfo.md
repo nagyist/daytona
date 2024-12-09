@@ -1,93 +1,119 @@
-# Provider
+# ProviderProviderInfo
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**AgentlessTarget** | Pointer to **bool** |  | [optional] 
 **Label** | Pointer to **string** |  | [optional] 
 **Name** | **string** |  | 
 **Version** | **string** |  | 
 
 ## Methods
 
-### NewProvider
+### NewProviderProviderInfo
 
-`func NewProvider(name string, version string, ) *Provider`
+`func NewProviderProviderInfo(name string, version string, ) *ProviderProviderInfo`
 
-NewProvider instantiates a new Provider object
+NewProviderProviderInfo instantiates a new ProviderProviderInfo object
 This constructor will assign default values to properties that have it defined,
 and makes sure properties required by API are set, but the set of arguments
 will change when the set of required properties is changed
 
-### NewProviderWithDefaults
+### NewProviderProviderInfoWithDefaults
 
-`func NewProviderWithDefaults() *Provider`
+`func NewProviderProviderInfoWithDefaults() *ProviderProviderInfo`
 
-NewProviderWithDefaults instantiates a new Provider object
+NewProviderProviderInfoWithDefaults instantiates a new ProviderProviderInfo object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
+### GetAgentlessTarget
+
+`func (o *ProviderProviderInfo) GetAgentlessTarget() bool`
+
+GetAgentlessTarget returns the AgentlessTarget field if non-nil, zero value otherwise.
+
+### GetAgentlessTargetOk
+
+`func (o *ProviderProviderInfo) GetAgentlessTargetOk() (*bool, bool)`
+
+GetAgentlessTargetOk returns a tuple with the AgentlessTarget field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAgentlessTarget
+
+`func (o *ProviderProviderInfo) SetAgentlessTarget(v bool)`
+
+SetAgentlessTarget sets AgentlessTarget field to given value.
+
+### HasAgentlessTarget
+
+`func (o *ProviderProviderInfo) HasAgentlessTarget() bool`
+
+HasAgentlessTarget returns a boolean if a field has been set.
+
 ### GetLabel
 
-`func (o *Provider) GetLabel() string`
+`func (o *ProviderProviderInfo) GetLabel() string`
 
 GetLabel returns the Label field if non-nil, zero value otherwise.
 
 ### GetLabelOk
 
-`func (o *Provider) GetLabelOk() (*string, bool)`
+`func (o *ProviderProviderInfo) GetLabelOk() (*string, bool)`
 
 GetLabelOk returns a tuple with the Label field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetLabel
 
-`func (o *Provider) SetLabel(v string)`
+`func (o *ProviderProviderInfo) SetLabel(v string)`
 
 SetLabel sets Label field to given value.
 
 ### HasLabel
 
-`func (o *Provider) HasLabel() bool`
+`func (o *ProviderProviderInfo) HasLabel() bool`
 
 HasLabel returns a boolean if a field has been set.
 
 ### GetName
 
-`func (o *Provider) GetName() string`
+`func (o *ProviderProviderInfo) GetName() string`
 
 GetName returns the Name field if non-nil, zero value otherwise.
 
 ### GetNameOk
 
-`func (o *Provider) GetNameOk() (*string, bool)`
+`func (o *ProviderProviderInfo) GetNameOk() (*string, bool)`
 
 GetNameOk returns a tuple with the Name field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetName
 
-`func (o *Provider) SetName(v string)`
+`func (o *ProviderProviderInfo) SetName(v string)`
 
 SetName sets Name field to given value.
 
 
 ### GetVersion
 
-`func (o *Provider) GetVersion() string`
+`func (o *ProviderProviderInfo) GetVersion() string`
 
 GetVersion returns the Version field if non-nil, zero value otherwise.
 
 ### GetVersionOk
 
-`func (o *Provider) GetVersionOk() (*string, bool)`
+`func (o *ProviderProviderInfo) GetVersionOk() (*string, bool)`
 
 GetVersionOk returns a tuple with the Version field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetVersion
 
-`func (o *Provider) SetVersion(v string)`
+`func (o *ProviderProviderInfo) SetVersion(v string)`
 
 SetVersion sets Version field to given value.
 

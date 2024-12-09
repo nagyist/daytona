@@ -6,7 +6,6 @@ package provider
 import (
 	"net/rpc"
 
-	"github.com/daytonaio/daytona/pkg/models"
 	"github.com/daytonaio/daytona/pkg/provider/util"
 	"github.com/hashicorp/go-plugin"
 )
@@ -23,13 +22,13 @@ type Provider interface {
 	StartTarget(*TargetRequest) (*util.Empty, error)
 	StopTarget(*TargetRequest) (*util.Empty, error)
 	DestroyTarget(*TargetRequest) (*util.Empty, error)
-	GetTargetInfo(*TargetRequest) (*models.TargetInfo, error)
+	GetTargetProviderMetadata(*TargetRequest) (string, error)
 
 	CreateWorkspace(*WorkspaceRequest) (*util.Empty, error)
 	StartWorkspace(*WorkspaceRequest) (*util.Empty, error)
 	StopWorkspace(*WorkspaceRequest) (*util.Empty, error)
 	DestroyWorkspace(*WorkspaceRequest) (*util.Empty, error)
-	GetWorkspaceInfo(*WorkspaceRequest) (*models.WorkspaceInfo, error)
+	GetWorkspaceProviderMetadata(*WorkspaceRequest) (string, error)
 }
 
 type ProviderPlugin struct {

@@ -869,92 +869,9 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/Provider"
+                                "$ref": "#/definitions/provider.ProviderInfo"
                             }
                         }
-                    }
-                }
-            }
-        },
-        "/provider/install": {
-            "post": {
-                "description": "Install a provider",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "provider"
-                ],
-                "summary": "Install a provider",
-                "operationId": "InstallProvider",
-                "parameters": [
-                    {
-                        "description": "Provider to install",
-                        "name": "provider",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/InstallProviderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/provider/{provider}/target-config-manifest": {
-            "get": {
-                "description": "Get provider target config manifest",
-                "tags": [
-                    "provider"
-                ],
-                "summary": "Get provider target config manifest",
-                "operationId": "GetTargetConfigManifest",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Provider name",
-                        "name": "provider",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/TargetConfigManifest"
-                        }
-                    }
-                }
-            }
-        },
-        "/provider/{provider}/uninstall": {
-            "post": {
-                "description": "Uninstall a provider",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "provider"
-                ],
-                "summary": "Uninstall a provider",
-                "operationId": "UninstallProvider",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Provider to uninstall",
-                        "name": "provider",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     }
                 }
             }
@@ -1202,9 +1119,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "boolean",
-                        "description": "Verbose",
-                        "name": "verbose",
-                        "in": "query"
+                        "description": "Show target config options",
+                        "name": "showOptions",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1261,6 +1179,15 @@ const docTemplate = `{
                 ],
                 "summary": "List target configs",
                 "operationId": "ListTargetConfigs",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Show target config options",
+                        "name": "showOptions",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1289,6 +1216,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/AddTargetConfigDTO"
                         }
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Show target config options",
+                        "name": "showOptions",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1346,9 +1280,10 @@ const docTemplate = `{
                     },
                     {
                         "type": "boolean",
-                        "description": "Verbose",
-                        "name": "verbose",
-                        "in": "query"
+                        "description": "Show target config options",
+                        "name": "showOptions",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1505,14 +1440,6 @@ const docTemplate = `{
                 ],
                 "summary": "List workspaces",
                 "operationId": "ListWorkspaces",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "description": "Verbose",
-                        "name": "verbose",
-                        "in": "query"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1932,12 +1859,6 @@ const docTemplate = `{
                         "name": "workspaceId",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Verbose",
-                        "name": "verbose",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2661,24 +2582,6 @@ const docTemplate = `{
                 }
             }
         },
-        "InstallProviderRequest": {
-            "type": "object",
-            "required": [
-                "downloadUrls",
-                "name"
-            ],
-            "properties": {
-                "downloadUrls": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "Job": {
             "type": "object",
             "required": [
@@ -2829,24 +2732,6 @@ const docTemplate = `{
                     }
                 },
                 "workspaceTemplateName": {
-                    "type": "string"
-                }
-            }
-        },
-        "Provider": {
-            "type": "object",
-            "required": [
-                "name",
-                "version"
-            ],
-            "properties": {
-                "label": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "version": {
                     "type": "string"
                 }
             }
@@ -3090,6 +2975,9 @@ const docTemplate = `{
                 "uptime"
             ],
             "properties": {
+                "providerMetadata": {
+                    "type": "string"
+                },
                 "uptime": {
                     "type": "integer"
                 }
@@ -3103,6 +2991,9 @@ const docTemplate = `{
             "properties": {
                 "gitStatus": {
                     "$ref": "#/definitions/GitStatus"
+                },
+                "providerMetadata": {
+                    "type": "string"
                 },
                 "uptime": {
                     "type": "integer"
@@ -3218,49 +3109,6 @@ const docTemplate = `{
                 }
             }
         },
-        "TargetConfigManifest": {
-            "type": "object",
-            "additionalProperties": {
-                "$ref": "#/definitions/TargetConfigProperty"
-            }
-        },
-        "TargetConfigProperty": {
-            "type": "object",
-            "properties": {
-                "defaultValue": {
-                    "description": "DefaultValue is converted into the appropriate type based on the Type\nIf the property is a FilePath, the DefaultValue is a path to a directory",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Brief description of the property",
-                    "type": "string"
-                },
-                "disabledPredicate": {
-                    "description": "A regex string matched with the name of the target config to determine if the property should be disabled\nIf the regex matches the target config name, the property will be disabled\nE.g. \"^local$\" will disable the property for the local target",
-                    "type": "string"
-                },
-                "inputMasked": {
-                    "type": "boolean"
-                },
-                "options": {
-                    "description": "Options is only used if the Type is TargetConfigPropertyTypeOption",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "suggestions": {
-                    "description": "Suggestions is an optional list of auto-complete values to assist the user while filling the field",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "type": {
-                    "$ref": "#/definitions/provider.TargetConfigPropertyType"
-                }
-            }
-        },
         "TargetDTO": {
             "type": "object",
             "required": [
@@ -3285,9 +3133,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
-                },
-                "info": {
-                    "$ref": "#/definitions/TargetInfo"
                 },
                 "lastJob": {
                     "$ref": "#/definitions/Job"
@@ -3315,20 +3160,6 @@ const docTemplate = `{
                 }
             }
         },
-        "TargetInfo": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "providerMetadata": {
-                    "type": "string"
-                }
-            }
-        },
         "TargetMetadata": {
             "type": "object",
             "required": [
@@ -3337,6 +3168,9 @@ const docTemplate = `{
                 "uptime"
             ],
             "properties": {
+                "providerMetadata": {
+                    "type": "string"
+                },
                 "targetId": {
                     "type": "string"
                 },
@@ -3413,6 +3247,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "providerMetadata": {
+                    "type": "string"
+                },
                 "repository": {
                     "$ref": "#/definitions/GitRepository"
                 },
@@ -3459,9 +3296,6 @@ const docTemplate = `{
                 "image": {
                     "type": "string"
                 },
-                "info": {
-                    "$ref": "#/definitions/WorkspaceInfo"
-                },
                 "lastJob": {
                     "$ref": "#/definitions/Job"
                 },
@@ -3469,6 +3303,9 @@ const docTemplate = `{
                     "$ref": "#/definitions/WorkspaceMetadata"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "providerMetadata": {
                     "type": "string"
                 },
                 "repository": {
@@ -3484,32 +3321,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "type": "string"
-                }
-            }
-        },
-        "WorkspaceInfo": {
-            "type": "object",
-            "required": [
-                "created",
-                "isRunning",
-                "name",
-                "targetId"
-            ],
-            "properties": {
-                "created": {
-                    "type": "string"
-                },
-                "isRunning": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "providerMetadata": {
-                    "type": "string"
-                },
-                "targetId": {
                     "type": "string"
                 }
             }
@@ -3664,24 +3475,26 @@ const docTemplate = `{
                 "ResourceStateNameDeleted"
             ]
         },
-        "provider.TargetConfigPropertyType": {
-            "type": "string",
-            "enum": [
-                "string",
-                "option",
-                "boolean",
-                "int",
-                "float",
-                "file-path"
+        "provider.ProviderInfo": {
+            "type": "object",
+            "required": [
+                "name",
+                "version"
             ],
-            "x-enum-varnames": [
-                "TargetConfigPropertyTypeString",
-                "TargetConfigPropertyTypeOption",
-                "TargetConfigPropertyTypeBoolean",
-                "TargetConfigPropertyTypeInt",
-                "TargetConfigPropertyTypeFloat",
-                "TargetConfigPropertyTypeFilePath"
-            ]
+            "properties": {
+                "agentlessTarget": {
+                    "type": "boolean"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {

@@ -10,7 +10,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/jobs/util"
 	"github.com/daytonaio/daytona/pkg/logs"
 	"github.com/daytonaio/daytona/pkg/models"
-	"github.com/daytonaio/daytona/pkg/provisioner"
+	"github.com/daytonaio/daytona/pkg/provider"
 	"github.com/daytonaio/daytona/pkg/stores"
 	"github.com/daytonaio/daytona/pkg/views"
 )
@@ -47,12 +47,17 @@ func (wj *WorkspaceJob) create(ctx context.Context, j *models.Job) error {
 
 	w.EnvVars = util.ExtractContainerRegistryFromEnvVars(workspaceEnvVars)
 
-	err = wj.provisioner.CreateWorkspace(provisioner.WorkspaceParams{
-		Workspace:                     w,
-		ContainerRegistry:             cr,
-		GitProviderConfig:             gc,
-		BuilderImage:                  wj.builderImage,
-		BuilderImageContainerRegistry: builderCr,
+	targetProvider, err := wj.providerManager.GetProvider(w.Target.TargetConfig.ProviderInfo.Name)
+	if err != nil {
+		return err
+	}
+
+	_, err = (*targetProvider).CreateWorkspace(&provider.WorkspaceRequest{
+		Workspace:                w,
+		ContainerRegistry:        cr,
+		GitProviderConfig:        gc,
+		BuilderImage:             wj.builderImage,
+		BuilderContainerRegistry: builderCr,
 	})
 	if err != nil {
 		return err

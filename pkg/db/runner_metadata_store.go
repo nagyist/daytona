@@ -23,6 +23,18 @@ func NewRunnerMetadataStore(store IStore) (stores.RunnerMetadataStore, error) {
 	return &RunnerMetadataStore{store}, nil
 }
 
+func (s *RunnerMetadataStore) List(ctx context.Context) ([]*models.RunnerMetadata, error) {
+	tx := s.GetTransaction(ctx)
+
+	var runnerMetadata []*models.RunnerMetadata
+	tx = tx.Find(&runnerMetadata)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return runnerMetadata, nil
+}
+
 func (s *RunnerMetadataStore) Find(ctx context.Context, runnerId string) (*models.RunnerMetadata, error) {
 	tx := s.GetTransaction(ctx)
 

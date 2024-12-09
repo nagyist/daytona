@@ -9,7 +9,6 @@ import (
 
 	"github.com/daytonaio/daytona/pkg/logs"
 	"github.com/daytonaio/daytona/pkg/models"
-	"github.com/daytonaio/daytona/pkg/provisioner"
 	"github.com/daytonaio/daytona/pkg/services"
 	"github.com/daytonaio/daytona/pkg/stores"
 	"github.com/daytonaio/daytona/pkg/telemetry"
@@ -27,7 +26,6 @@ type TargetServiceConfig struct {
 	ServerApiUrl     string
 	ServerUrl        string
 	ServerVersion    string
-	Provisioner      provisioner.IProvisioner
 	LoggerFactory    logs.LoggerFactory
 	TelemetryService telemetry.TelemetryService
 }
@@ -45,7 +43,6 @@ func NewTargetService(config TargetServiceConfig) services.ITargetService {
 		serverApiUrl:     config.ServerApiUrl,
 		serverUrl:        config.ServerUrl,
 		serverVersion:    config.ServerVersion,
-		provisioner:      config.Provisioner,
 		loggerFactory:    config.LoggerFactory,
 		telemetryService: config.TelemetryService,
 	}
@@ -60,7 +57,6 @@ type TargetService struct {
 	revokeApiKey     func(ctx context.Context, name string) error
 	createJob        func(ctx context.Context, targetId string, action models.JobAction) error
 
-	provisioner      provisioner.IProvisioner
 	serverApiUrl     string
 	serverUrl        string
 	serverVersion    string
@@ -70,4 +66,17 @@ type TargetService struct {
 
 func (s *TargetService) GetTargetLogReader(targetId string) (io.Reader, error) {
 	return s.loggerFactory.CreateTargetLogReader(targetId)
+}
+
+func (s *TargetService) UpdateTargetProviderMetadata(ctx context.Context, targetId, metadata string) error {
+	tg, err := s.targetStore.Find(ctx, &stores.TargetFilter{
+		IdOrName: &targetId,
+	})
+	if err != nil {
+		return err
+	}
+
+	tg.ProviderMetadata = &metadata
+
+	return s.targetStore.Save(ctx, tg)
 }

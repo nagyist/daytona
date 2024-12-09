@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/daytonaio/daytona/pkg/api/controllers/provider/dto"
 	"github.com/daytonaio/daytona/pkg/server"
 	"github.com/gin-gonic/gin"
 )
@@ -18,28 +17,17 @@ import (
 //	@Summary		List providers
 //	@Description	List providers
 //	@Produce		json
-//	@Success		200	{array}	dto.Provider
+//	@Success		200	{array}	ProviderInfo
 //	@Router			/provider [get]
 //
 //	@id				ListProviders
 func ListProviders(ctx *gin.Context) {
 	server := server.GetInstance(nil)
-	providers := server.ProviderManager.GetProviders()
-
-	result := []dto.Provider{}
-	for _, provider := range providers {
-		info, err := provider.GetInfo()
-		if err != nil {
-			ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get provider: %w", err))
-			return
-		}
-
-		result = append(result, dto.Provider{
-			Name:    info.Name,
-			Label:   info.Label,
-			Version: info.Version,
-		})
+	providers, err := server.RunnerService.ListProviders(ctx.Request.Context())
+	if err != nil {
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to list providers: %w", err))
+		return
 	}
 
-	ctx.JSON(200, result)
+	ctx.JSON(200, providers)
 }

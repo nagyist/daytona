@@ -82,7 +82,7 @@ Name | Type | Description  | Notes
 
 ## GetWorkspace
 
-> WorkspaceDTO GetWorkspace(ctx, workspaceId).Verbose(verbose).Execute()
+> WorkspaceDTO GetWorkspace(ctx, workspaceId).Execute()
 
 Get workspace info
 
@@ -102,11 +102,10 @@ import (
 
 func main() {
 	workspaceId := "workspaceId_example" // string | Workspace ID or Name
-	verbose := true // bool | Verbose (optional)
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
-	resp, r, err := apiClient.WorkspaceAPI.GetWorkspace(context.Background(), workspaceId).Verbose(verbose).Execute()
+	resp, r, err := apiClient.WorkspaceAPI.GetWorkspace(context.Background(), workspaceId).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `WorkspaceAPI.GetWorkspace``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -132,7 +131,6 @@ Other parameters are passed through a pointer to a apiGetWorkspaceRequest struct
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
- **verbose** | **bool** | Verbose | 
 
 ### Return type
 
@@ -154,7 +152,7 @@ Name | Type | Description  | Notes
 
 ## ListWorkspaces
 
-> []WorkspaceDTO ListWorkspaces(ctx).Verbose(verbose).Execute()
+> []WorkspaceDTO ListWorkspaces(ctx).Execute()
 
 List workspaces
 
@@ -173,11 +171,10 @@ import (
 )
 
 func main() {
-	verbose := true // bool | Verbose (optional)
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
-	resp, r, err := apiClient.WorkspaceAPI.ListWorkspaces(context.Background()).Verbose(verbose).Execute()
+	resp, r, err := apiClient.WorkspaceAPI.ListWorkspaces(context.Background()).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `WorkspaceAPI.ListWorkspaces``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -189,16 +186,12 @@ func main() {
 
 ### Path Parameters
 
-
+This endpoint does not need any parameter.
 
 ### Other Parameters
 
 Other parameters are passed through a pointer to a apiListWorkspacesRequest struct via the builder pattern
 
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **verbose** | **bool** | Verbose | 
 
 ### Return type
 

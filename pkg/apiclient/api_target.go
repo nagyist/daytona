@@ -149,15 +149,15 @@ func (a *TargetAPIService) CreateTargetExecute(r ApiCreateTargetRequest) (*Targe
 }
 
 type ApiGetTargetRequest struct {
-	ctx        context.Context
-	ApiService *TargetAPIService
-	targetId   string
-	verbose    *bool
+	ctx         context.Context
+	ApiService  *TargetAPIService
+	targetId    string
+	showOptions *bool
 }
 
-// Verbose
-func (r ApiGetTargetRequest) Verbose(verbose bool) ApiGetTargetRequest {
-	r.verbose = &verbose
+// Show target config options
+func (r ApiGetTargetRequest) ShowOptions(showOptions bool) ApiGetTargetRequest {
+	r.showOptions = &showOptions
 	return r
 }
 
@@ -204,10 +204,11 @@ func (a *TargetAPIService) GetTargetExecute(r ApiGetTargetRequest) (*TargetDTO, 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-
-	if r.verbose != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "verbose", r.verbose, "")
+	if r.showOptions == nil {
+		return localVarReturnValue, nil, reportError("showOptions is required and must be specified")
 	}
+
+	parameterAddToHeaderOrQuery(localVarQueryParams, "showOptions", r.showOptions, "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -277,14 +278,14 @@ func (a *TargetAPIService) GetTargetExecute(r ApiGetTargetRequest) (*TargetDTO, 
 }
 
 type ApiListTargetsRequest struct {
-	ctx        context.Context
-	ApiService *TargetAPIService
-	verbose    *bool
+	ctx         context.Context
+	ApiService  *TargetAPIService
+	showOptions *bool
 }
 
-// Verbose
-func (r ApiListTargetsRequest) Verbose(verbose bool) ApiListTargetsRequest {
-	r.verbose = &verbose
+// Show target config options
+func (r ApiListTargetsRequest) ShowOptions(showOptions bool) ApiListTargetsRequest {
+	r.showOptions = &showOptions
 	return r
 }
 
@@ -328,10 +329,11 @@ func (a *TargetAPIService) ListTargetsExecute(r ApiListTargetsRequest) ([]Target
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-
-	if r.verbose != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "verbose", r.verbose, "")
+	if r.showOptions == nil {
+		return localVarReturnValue, nil, reportError("showOptions is required and must be specified")
 	}
+
+	parameterAddToHeaderOrQuery(localVarQueryParams, "showOptions", r.showOptions, "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

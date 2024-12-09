@@ -83,7 +83,7 @@ Name | Type | Description  | Notes
 
 ## GetTarget
 
-> TargetDTO GetTarget(ctx, targetId).Verbose(verbose).Execute()
+> TargetDTO GetTarget(ctx, targetId).ShowOptions(showOptions).Execute()
 
 Get target info
 
@@ -103,11 +103,11 @@ import (
 
 func main() {
 	targetId := "targetId_example" // string | Target ID or Name
-	verbose := true // bool | Verbose (optional)
+	showOptions := true // bool | Show target config options
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
-	resp, r, err := apiClient.TargetAPI.GetTarget(context.Background(), targetId).Verbose(verbose).Execute()
+	resp, r, err := apiClient.TargetAPI.GetTarget(context.Background(), targetId).ShowOptions(showOptions).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `TargetAPI.GetTarget``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -133,7 +133,7 @@ Other parameters are passed through a pointer to a apiGetTargetRequest struct vi
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
- **verbose** | **bool** | Verbose | 
+ **showOptions** | **bool** | Show target config options | 
 
 ### Return type
 
@@ -155,7 +155,7 @@ Name | Type | Description  | Notes
 
 ## ListTargets
 
-> []TargetDTO ListTargets(ctx).Verbose(verbose).Execute()
+> []TargetDTO ListTargets(ctx).ShowOptions(showOptions).Execute()
 
 List targets
 
@@ -174,11 +174,11 @@ import (
 )
 
 func main() {
-	verbose := true // bool | Verbose (optional)
+	showOptions := true // bool | Show target config options
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
-	resp, r, err := apiClient.TargetAPI.ListTargets(context.Background()).Verbose(verbose).Execute()
+	resp, r, err := apiClient.TargetAPI.ListTargets(context.Background()).ShowOptions(showOptions).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `TargetAPI.ListTargets``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -199,7 +199,7 @@ Other parameters are passed through a pointer to a apiListTargetsRequest struct 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **verbose** | **bool** | Verbose | 
+ **showOptions** | **bool** | Show target config options | 
 
 ### Return type
 

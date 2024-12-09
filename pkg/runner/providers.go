@@ -1,7 +1,7 @@
 // Copyright 2024 Daytona Platforms Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-package server
+package runner
 
 import (
 	"context"
@@ -9,12 +9,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/daytonaio/daytona/pkg/provider/manager"
+	"github.com/daytonaio/daytona/pkg/runner/providermanager"
 	log "github.com/sirupsen/logrus"
 )
 
-func (s *Server) downloadDefaultProviders() error {
-	manifest, err := s.ProviderManager.GetProvidersManifest()
+func (s *Runner) downloadDefaultProviders() error {
+	manifest, err := s.providerManager.GetProvidersManifest()
 	if err != nil {
 		return err
 	}
@@ -23,16 +23,16 @@ func (s *Server) downloadDefaultProviders() error {
 
 	log.Info("Downloading default providers")
 	for providerName, provider := range defaultProviders {
-		lockFilePath := filepath.Join(s.config.ProvidersDir, providerName, manager.INITIAL_SETUP_LOCK_FILE_NAME)
+		lockFilePath := filepath.Join(s.providersDir, providerName, providermanager.INITIAL_SETUP_LOCK_FILE_NAME)
 
 		_, err := os.Stat(lockFilePath)
 		if err == nil {
 			continue
 		}
 
-		_, err = s.ProviderManager.DownloadProvider(context.Background(), provider.DownloadUrls, providerName)
+		_, err = s.providerManager.DownloadProvider(context.Background(), provider.DownloadUrls, providerName)
 		if err != nil {
-			if !manager.IsProviderAlreadyDownloaded(err, providerName) {
+			if !providermanager.IsProviderAlreadyDownloaded(err, providerName) {
 				log.Error(err)
 			}
 			continue
@@ -44,15 +44,15 @@ func (s *Server) downloadDefaultProviders() error {
 	return nil
 }
 
-func (s *Server) registerProviders() error {
+func (s *Runner) registerProviders() error {
 	log.Info("Registering providers")
 
-	manifest, err := s.ProviderManager.GetProvidersManifest()
+	manifest, err := s.providerManager.GetProvidersManifest()
 	if err != nil {
 		return err
 	}
 
-	directoryEntries, err := os.ReadDir(s.config.ProvidersDir)
+	directoryEntries, err := os.ReadDir(s.providersDir)
 	if err != nil {
 		if os.IsNotExist(err) {
 			log.Info("No providers found")
@@ -63,24 +63,24 @@ func (s *Server) registerProviders() error {
 
 	for _, entry := range directoryEntries {
 		if entry.IsDir() {
-			providerDir := filepath.Join(s.config.ProvidersDir, entry.Name())
+			providerDir := filepath.Join(s.providersDir, entry.Name())
 
 			pluginPath, err := s.getPluginPath(providerDir)
 			if err != nil {
-				if !manager.IsNoPluginFound(err, providerDir) {
+				if !providermanager.IsNoPluginFound(err, providerDir) {
 					log.Error(err)
 				}
 				continue
 			}
 
-			err = s.ProviderManager.RegisterProvider(pluginPath, false)
+			err = s.providerManager.RegisterProvider(pluginPath, false)
 			if err != nil {
 				log.Error(err)
 				continue
 			}
 
 			// Lock the initial setup
-			lockFilePath := filepath.Join(s.config.ProvidersDir, entry.Name(), manager.INITIAL_SETUP_LOCK_FILE_NAME)
+			lockFilePath := filepath.Join(s.providersDir, entry.Name(), providermanager.INITIAL_SETUP_LOCK_FILE_NAME)
 
 			_, err = os.Stat(lockFilePath)
 			if err != nil {
@@ -92,7 +92,7 @@ func (s *Server) registerProviders() error {
 			}
 
 			// Check for updates
-			provider, err := s.ProviderManager.GetProvider(entry.Name())
+			provider, err := s.providerManager.GetProvider(entry.Name())
 			if err != nil {
 				log.Error(err)
 				continue
@@ -126,14 +126,14 @@ func (s *Server) registerProviders() error {
 	return nil
 }
 
-func (s *Server) getPluginPath(dir string) (string, error) {
+func (s *Runner) getPluginPath(dir string) (string, error) {
 	files, err := os.ReadDir(dir)
 	if err != nil {
 		return "", err
 	}
 
 	for _, file := range files {
-		if !file.IsDir() && file.Name() != manager.INITIAL_SETUP_LOCK_FILE_NAME {
+		if !file.IsDir() && file.Name() != providermanager.INITIAL_SETUP_LOCK_FILE_NAME {
 			return filepath.Join(dir, file.Name()), nil
 		}
 	}

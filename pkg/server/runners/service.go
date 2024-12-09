@@ -68,6 +68,20 @@ func (s *RunnerService) ListRunners(ctx context.Context) ([]*services.RunnerDTO,
 	}), nil
 }
 
+func (s *RunnerService) ListProviders(ctx context.Context) ([]models.ProviderInfo, error) {
+	metadatas, err := s.runnerMetadataStore.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	providers := []models.ProviderInfo{}
+	for _, metadata := range metadatas {
+		providers = append(providers, metadata.Providers...)
+	}
+
+	return providers, nil
+}
+
 func (s *RunnerService) SetRunnerMetadata(ctx context.Context, runnerId string, metadata *models.RunnerMetadata) error {
 	m, err := s.runnerMetadataStore.Find(ctx, runnerId)
 	if err != nil {

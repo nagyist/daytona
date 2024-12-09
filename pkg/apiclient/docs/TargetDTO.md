@@ -7,7 +7,6 @@ Name | Type | Description | Notes
 **Default** | **bool** |  | 
 **EnvVars** | **map[string]string** |  | 
 **Id** | **string** |  | 
-**Info** | Pointer to [**TargetInfo**](TargetInfo.md) |  | [optional] 
 **LastJob** | Pointer to [**Job**](Job.md) |  | [optional] 
 **Metadata** | Pointer to [**TargetMetadata**](TargetMetadata.md) |  | [optional] 
 **Name** | **string** |  | 
@@ -94,31 +93,6 @@ and a boolean to check if the value has been set.
 
 SetId sets Id field to given value.
 
-
-### GetInfo
-
-`func (o *TargetDTO) GetInfo() TargetInfo`
-
-GetInfo returns the Info field if non-nil, zero value otherwise.
-
-### GetInfoOk
-
-`func (o *TargetDTO) GetInfoOk() (*TargetInfo, bool)`
-
-GetInfoOk returns a tuple with the Info field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetInfo
-
-`func (o *TargetDTO) SetInfo(v TargetInfo)`
-
-SetInfo sets Info field to given value.
-
-### HasInfo
-
-`func (o *TargetDTO) HasInfo() bool`
-
-HasInfo returns a boolean if a field has been set.
 
 ### GetLastJob
 
