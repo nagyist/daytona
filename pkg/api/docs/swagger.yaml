@@ -7,7 +7,7 @@ definitions:
       options:
         type: string
       providerInfo:
-        $ref: '#/definitions/TargetProviderInfo'
+        $ref: '#/definitions/ProviderInfo'
     required:
     - name
     - options
@@ -518,6 +518,23 @@ definitions:
     - retention
     - workspaceTemplateName
     type: object
+  ProviderInfo:
+    properties:
+      agentlessTarget:
+        type: boolean
+      label:
+        type: string
+      name:
+        type: string
+      runnerId:
+        type: string
+      version:
+        type: string
+    required:
+    - name
+    - runnerId
+    - version
+    type: object
   RegisterRunnerDTO:
     properties:
       alias:
@@ -576,7 +593,7 @@ definitions:
     properties:
       providers:
         items:
-          $ref: '#/definitions/TargetProviderInfo'
+          $ref: '#/definitions/ProviderInfo'
         type: array
       runnerId:
         type: string
@@ -635,6 +652,7 @@ definitions:
       logFile:
         $ref: '#/definitions/LogFileConfig'
       providersDir:
+        description: 'TODO: Move to runner config'
         type: string
       registryUrl:
         type: string
@@ -744,6 +762,8 @@ definitions:
         $ref: '#/definitions/TargetMetadata'
       name:
         type: string
+      providerMetadata:
+        type: string
       targetConfig:
         $ref: '#/definitions/TargetConfig'
       targetConfigId:
@@ -773,7 +793,7 @@ definitions:
         description: JSON encoded map of options
         type: string
       providerInfo:
-        $ref: '#/definitions/TargetProviderInfo'
+        $ref: '#/definitions/ProviderInfo'
     required:
     - deleted
     - id
@@ -797,6 +817,8 @@ definitions:
         $ref: '#/definitions/TargetMetadata'
       name:
         type: string
+      providerMetadata:
+        type: string
       state:
         $ref: '#/definitions/ResourceState'
       targetConfig:
@@ -819,8 +841,6 @@ definitions:
     type: object
   TargetMetadata:
     properties:
-      providerMetadata:
-        type: string
       targetId:
         type: string
       updatedAt:
@@ -831,23 +851,6 @@ definitions:
     - targetId
     - updatedAt
     - uptime
-    type: object
-  TargetProviderInfo:
-    properties:
-      agentlessTarget:
-        type: boolean
-      label:
-        type: string
-      name:
-        type: string
-      runnerId:
-        type: string
-      version:
-        type: string
-    required:
-    - name
-    - runnerId
-    - version
     type: object
   Workspace:
     properties:
@@ -1052,20 +1055,6 @@ definitions:
     - ResourceStateNamePendingForcedDelete
     - ResourceStateNameDeleting
     - ResourceStateNameDeleted
-  provider.ProviderInfo:
-    properties:
-      agentlessTarget:
-        type: boolean
-      label:
-        type: string
-      name:
-        type: string
-      version:
-        type: string
-    required:
-    - name
-    - version
-    type: object
 host: localhost:3986
 info:
   contact: {}
@@ -1644,7 +1633,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/provider.ProviderInfo'
+              $ref: '#/definitions/ProviderInfo'
             type: array
       summary: List providers
       tags:

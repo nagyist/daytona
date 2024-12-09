@@ -866,7 +866,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/provider.ProviderInfo"
+                                "$ref": "#/definitions/ProviderInfo"
                             }
                         }
                     }
@@ -1994,7 +1994,7 @@
                     "type": "string"
                 },
                 "providerInfo": {
-                    "$ref": "#/definitions/TargetProviderInfo"
+                    "$ref": "#/definitions/ProviderInfo"
                 }
             }
         },
@@ -2733,6 +2733,31 @@
                 }
             }
         },
+        "ProviderInfo": {
+            "type": "object",
+            "required": [
+                "name",
+                "runnerId",
+                "version"
+            ],
+            "properties": {
+                "agentlessTarget": {
+                    "type": "boolean"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "runnerId": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "RegisterRunnerDTO": {
             "type": "object",
             "required": [
@@ -2825,7 +2850,7 @@
                 "providers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/TargetProviderInfo"
+                        "$ref": "#/definitions/ProviderInfo"
                     }
                 },
                 "runnerId": {
@@ -2920,6 +2945,7 @@
                     "$ref": "#/definitions/LogFileConfig"
                 },
                 "providersDir": {
+                    "description": "TODO: Move to runner config",
                     "type": "string"
                 },
                 "registryUrl": {
@@ -3064,6 +3090,9 @@
                 "name": {
                     "type": "string"
                 },
+                "providerMetadata": {
+                    "type": "string"
+                },
                 "targetConfig": {
                     "$ref": "#/definitions/TargetConfig"
                 },
@@ -3102,7 +3131,7 @@
                     "type": "string"
                 },
                 "providerInfo": {
-                    "$ref": "#/definitions/TargetProviderInfo"
+                    "$ref": "#/definitions/ProviderInfo"
                 }
             }
         },
@@ -3140,6 +3169,9 @@
                 "name": {
                     "type": "string"
                 },
+                "providerMetadata": {
+                    "type": "string"
+                },
                 "state": {
                     "$ref": "#/definitions/ResourceState"
                 },
@@ -3165,9 +3197,6 @@
                 "uptime"
             ],
             "properties": {
-                "providerMetadata": {
-                    "type": "string"
-                },
                 "targetId": {
                     "type": "string"
                 },
@@ -3176,31 +3205,6 @@
                 },
                 "uptime": {
                     "type": "integer"
-                }
-            }
-        },
-        "TargetProviderInfo": {
-            "type": "object",
-            "required": [
-                "name",
-                "runnerId",
-                "version"
-            ],
-            "properties": {
-                "agentlessTarget": {
-                    "type": "boolean"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "runnerId": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
                 }
             }
         },
@@ -3471,27 +3475,6 @@
                 "ResourceStateNameDeleting",
                 "ResourceStateNameDeleted"
             ]
-        },
-        "provider.ProviderInfo": {
-            "type": "object",
-            "required": [
-                "name",
-                "version"
-            ],
-            "properties": {
-                "agentlessTarget": {
-                    "type": "boolean"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
         }
     },
     "securityDefinitions": {

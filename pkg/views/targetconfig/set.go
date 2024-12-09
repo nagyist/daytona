@@ -18,7 +18,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"github.com/daytonaio/daytona/internal/util"
-	"github.com/daytonaio/daytona/pkg/apiclient"
+	"github.com/daytonaio/daytona/pkg/provider"
 	"github.com/daytonaio/daytona/pkg/views"
 )
 
@@ -44,7 +44,7 @@ func NewTargetConfigNameInput(name *string, existingNames []string) error {
 	return nil
 }
 
-func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest map[string]apiclient.TargetConfigProperty) error {
+func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest map[string]provider.TargetConfigProperty) error {
 	fields := make([]huh.Field, 0, len(targetConfigManifest))
 	groups := []*huh.Group{}
 	options := make(map[string]interface{})
@@ -62,14 +62,14 @@ func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest ma
 
 	for _, name := range sortedKeys {
 		property := targetConfigManifest[name]
-		if property.DisabledPredicate != nil && *property.DisabledPredicate != "" {
-			if matched, err := regexp.Match(*property.DisabledPredicate, []byte(targetConfig.Name)); err == nil && matched {
+		if property.DisabledPredicate != "" {
+			if matched, err := regexp.Match(property.DisabledPredicate, []byte(targetConfig.Name)); err == nil && matched {
 				continue
 			}
 		}
 
-		switch *property.Type {
-		case apiclient.TargetConfigPropertyTypeFloat, apiclient.TargetConfigPropertyTypeInt:
+		switch property.Type {
+		case provider.TargetConfigPropertyTypeFloat, provider.TargetConfigPropertyTypeInt:
 			var initialValue *string
 			floatValue, ok := options[name].(float64)
 			if ok {
@@ -80,7 +80,7 @@ func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest ma
 			input, value := getInput(name, property, initialValue)
 			fields = append(fields, input)
 			options[name] = value
-		case apiclient.TargetConfigPropertyTypeString:
+		case provider.TargetConfigPropertyTypeString:
 			var initialValue *string
 			v, ok := options[name].(string)
 			if ok {
@@ -90,7 +90,7 @@ func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest ma
 			input, value := getInput(name, property, initialValue)
 			fields = append(fields, input)
 			options[name] = value
-		case apiclient.TargetConfigPropertyTypeBoolean:
+		case provider.TargetConfigPropertyTypeBoolean:
 			var initialValue *bool
 			v, ok := options[name].(bool)
 			if ok {
@@ -100,7 +100,7 @@ func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest ma
 			confirm, value := getConfirm(name, property, initialValue)
 			fields = append(fields, confirm)
 			options[name] = value
-		case apiclient.TargetConfigPropertyTypeOption:
+		case provider.TargetConfigPropertyTypeOption:
 			var initialValue *string
 			v, ok := options[name].(string)
 			if ok {
@@ -110,7 +110,7 @@ func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest ma
 			selectField, value := getSelect(name, property, initialValue)
 			fields = append(fields, selectField)
 			options[name] = value
-		case apiclient.TargetConfigPropertyTypeFilePath:
+		case provider.TargetConfigPropertyTypeFilePath:
 			var initialValue *string
 			v, ok := options[name].(string)
 			if ok {
@@ -129,23 +129,23 @@ func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest ma
 	}
 
 	for name, property := range targetConfigManifest {
-		if property.DisabledPredicate != nil && *property.DisabledPredicate != "" {
-			if matched, err := regexp.Match(*property.DisabledPredicate, []byte(targetConfig.Name)); err == nil && matched {
+		if property.DisabledPredicate != "" {
+			if matched, err := regexp.Match(property.DisabledPredicate, []byte(targetConfig.Name)); err == nil && matched {
 				continue
 			}
 		}
-		switch *property.Type {
-		case apiclient.TargetConfigPropertyTypeInt:
+		switch property.Type {
+		case provider.TargetConfigPropertyTypeInt:
 			options[name], err = strconv.Atoi(*options[name].(*string))
 			if err != nil {
 				return err
 			}
-		case apiclient.TargetConfigPropertyTypeFloat:
+		case provider.TargetConfigPropertyTypeFloat:
 			options[name], err = strconv.ParseFloat(*options[name].(*string), 64)
 			if err != nil {
 				return err
 			}
-		case apiclient.TargetConfigPropertyTypeFilePath:
+		case provider.TargetConfigPropertyTypeFilePath:
 			if *options[name].(*string) == "none" {
 				delete(options, name)
 			}
@@ -162,29 +162,29 @@ func SetTargetConfigForm(targetConfig *TargetConfigView, targetConfigManifest ma
 	return nil
 }
 
-func getInput(name string, property apiclient.TargetConfigProperty, initialValue *string) (*huh.Input, *string) {
+func getInput(name string, property provider.TargetConfigProperty, initialValue *string) (*huh.Input, *string) {
 	value := property.DefaultValue
 	if initialValue != nil {
-		value = initialValue
+		value = *initialValue
 	}
 
 	input := huh.NewInput().
 		Title(name).
-		Description(*property.Description).
-		Value(value).
+		Description(property.Description).
+		Value(&value).
 		Validate(func(s string) error {
-			switch *property.Type {
-			case apiclient.TargetConfigPropertyTypeInt:
+			switch property.Type {
+			case provider.TargetConfigPropertyTypeInt:
 				_, err := strconv.Atoi(s)
 				return err
-			case apiclient.TargetConfigPropertyTypeFloat:
+			case provider.TargetConfigPropertyTypeFloat:
 				_, err := strconv.ParseFloat(s, 64)
 				return err
 			}
 			return nil
 		})
 
-	if property.InputMasked != nil && *property.InputMasked {
+	if property.InputMasked {
 		input = input.EchoMode(huh.EchoModePassword)
 	}
 
@@ -192,27 +192,27 @@ func getInput(name string, property apiclient.TargetConfigProperty, initialValue
 		input = input.Suggestions(property.Suggestions)
 	}
 
-	return input, value
+	return input, &value
 }
 
-func getSelect(name string, property apiclient.TargetConfigProperty, initialValue *string) (*huh.Select[string], *string) {
+func getSelect(name string, property provider.TargetConfigProperty, initialValue *string) (*huh.Select[string], *string) {
 	value := property.DefaultValue
 	if initialValue != nil {
-		value = initialValue
+		value = *initialValue
 	}
 
 	return huh.NewSelect[string]().
 		Title(name).
-		Description(*property.Description).
+		Description(property.Description).
 		Options(util.ArrayMap(property.Options, func(o string) huh.Option[string] {
 			return huh.NewOption(o, o)
 		})...).
-		Value(value), value
+		Value(&value), &value
 }
 
-func getConfirm(name string, property apiclient.TargetConfigProperty, initialValue *bool) (*huh.Confirm, *bool) {
+func getConfirm(name string, property provider.TargetConfigProperty, initialValue *bool) (*huh.Confirm, *bool) {
 	value := false
-	if property.DefaultValue != nil && *property.DefaultValue == "true" {
+	if property.DefaultValue == "true" {
 		value = true
 	}
 	if initialValue != nil {
@@ -221,16 +221,12 @@ func getConfirm(name string, property apiclient.TargetConfigProperty, initialVal
 
 	return huh.NewConfirm().
 		Title(name).
-		Description(*property.Description).
+		Description(property.Description).
 		Value(&value), &value
 }
 
-func getFilePicker(name string, property apiclient.TargetConfigProperty, initialValue *string) ([]*huh.Group, *string) {
-	dirPath := "~"
-
-	if property.DefaultValue != nil {
-		dirPath = *property.DefaultValue
-	}
+func getFilePicker(name string, property provider.TargetConfigProperty, initialValue *string) ([]*huh.Group, *string) {
+	dirPath := property.DefaultValue
 
 	home := os.Getenv("HOME")
 	if home != "" {
@@ -257,7 +253,7 @@ func getFilePicker(name string, property apiclient.TargetConfigProperty, initial
 
 	customPathInput := huh.NewInput().
 		Title(name).
-		Description(*property.Description).
+		Description(property.Description).
 		Value(value).
 		Validate(func(filePath string) error {
 			fileInfo, err := os.Stat(filePath)
@@ -281,7 +277,7 @@ func getFilePicker(name string, property apiclient.TargetConfigProperty, initial
 	options = append(options, huh.NewOption("Custom path", "custom-path"))
 	options = append(options, huh.NewOption("None", "none"))
 
-	description := fmt.Sprintf("%s\nShowing files in: %s\nYou can select a file, choose None or enter a Custom path", *property.Description, dirPath)
+	description := fmt.Sprintf("%s\nShowing files in: %s\nYou can select a file, choose None or enter a Custom path", property.Description, dirPath)
 
 	return []*huh.Group{
 		huh.NewGroup(

@@ -617,7 +617,7 @@ paths:
             application/json:
               schema:
                 items:
-                  $ref: '#/components/schemas/provider.ProviderInfo'
+                  $ref: '#/components/schemas/ProviderInfo'
                 type: array
           description: OK
       summary: List providers
@@ -1438,7 +1438,7 @@ components:
         options:
           type: string
         providerInfo:
-          $ref: '#/components/schemas/TargetProviderInfo'
+          $ref: '#/components/schemas/ProviderInfo'
       required:
       - name
       - options
@@ -2190,6 +2190,29 @@ components:
       - retention
       - workspaceTemplateName
       type: object
+    ProviderInfo:
+      example:
+        agentlessTarget: true
+        name: name
+        runnerId: runnerId
+        label: label
+        version: version
+      properties:
+        agentlessTarget:
+          type: boolean
+        label:
+          type: string
+        name:
+          type: string
+        runnerId:
+          type: string
+        version:
+          type: string
+      required:
+      - name
+      - runnerId
+      - version
+      type: object
     RegisterRunnerDTO:
       example:
         alias: alias
@@ -2293,7 +2316,7 @@ components:
       properties:
         providers:
           items:
-            $ref: '#/components/schemas/TargetProviderInfo'
+            $ref: '#/components/schemas/ProviderInfo'
           type: array
         runnerId:
           type: string
@@ -2383,6 +2406,7 @@ components:
         logFile:
           $ref: '#/components/schemas/LogFileConfig'
         providersDir:
+          description: "TODO: Move to runner config"
           type: string
         registryUrl:
           type: string
@@ -2509,7 +2533,6 @@ components:
       example:
         default: true
         metadata:
-          providerMetadata: providerMetadata
           targetId: targetId
           updatedAt: updatedAt
           uptime: 0
@@ -2524,6 +2547,7 @@ components:
             runnerId: runnerId
             label: label
             version: version
+        providerMetadata: providerMetadata
         lastJob:
           createdAt: createdAt
           resourceId: resourceId
@@ -2555,6 +2579,8 @@ components:
         metadata:
           $ref: '#/components/schemas/TargetMetadata'
         name:
+          type: string
+        providerMetadata:
           type: string
         targetConfig:
           $ref: '#/components/schemas/TargetConfig'
@@ -2596,7 +2622,7 @@ components:
           description: JSON encoded map of options
           type: string
         providerInfo:
-          $ref: '#/components/schemas/TargetProviderInfo'
+          $ref: '#/components/schemas/ProviderInfo'
       required:
       - deleted
       - id
@@ -2608,7 +2634,6 @@ components:
       example:
         default: true
         metadata:
-          providerMetadata: providerMetadata
           targetId: targetId
           updatedAt: updatedAt
           uptime: 0
@@ -2623,6 +2648,7 @@ components:
             runnerId: runnerId
             label: label
             version: version
+        providerMetadata: providerMetadata
         lastJob:
           createdAt: createdAt
           resourceId: resourceId
@@ -2680,7 +2706,6 @@ components:
           target:
             default: true
             metadata:
-              providerMetadata: providerMetadata
               targetId: targetId
               updatedAt: updatedAt
               uptime: 0
@@ -2695,6 +2720,7 @@ components:
                 runnerId: runnerId
                 label: label
                 version: version
+            providerMetadata: providerMetadata
             lastJob:
               createdAt: createdAt
               resourceId: resourceId
@@ -2768,7 +2794,6 @@ components:
           target:
             default: true
             metadata:
-              providerMetadata: providerMetadata
               targetId: targetId
               updatedAt: updatedAt
               uptime: 0
@@ -2783,6 +2808,7 @@ components:
                 runnerId: runnerId
                 label: label
                 version: version
+            providerMetadata: providerMetadata
             lastJob:
               createdAt: createdAt
               resourceId: resourceId
@@ -2833,6 +2859,8 @@ components:
           $ref: '#/components/schemas/TargetMetadata'
         name:
           type: string
+        providerMetadata:
+          type: string
         state:
           $ref: '#/components/schemas/ResourceState'
         targetConfig:
@@ -2855,13 +2883,10 @@ components:
       type: object
     TargetMetadata:
       example:
-        providerMetadata: providerMetadata
         targetId: targetId
         updatedAt: updatedAt
         uptime: 0
       properties:
-        providerMetadata:
-          type: string
         targetId:
           type: string
         updatedAt:
@@ -2872,29 +2897,6 @@ components:
       - targetId
       - updatedAt
       - uptime
-      type: object
-    TargetProviderInfo:
-      example:
-        agentlessTarget: true
-        name: name
-        runnerId: runnerId
-        label: label
-        version: version
-      properties:
-        agentlessTarget:
-          type: boolean
-        label:
-          type: string
-        name:
-          type: string
-        runnerId:
-          type: string
-        version:
-          type: string
-      required:
-      - name
-      - runnerId
-      - version
       type: object
     Workspace:
       example:
@@ -2936,7 +2938,6 @@ components:
         target:
           default: true
           metadata:
-            providerMetadata: providerMetadata
             targetId: targetId
             updatedAt: updatedAt
             uptime: 0
@@ -2951,6 +2952,7 @@ components:
               runnerId: runnerId
               label: label
               version: version
+          providerMetadata: providerMetadata
           lastJob:
             createdAt: createdAt
             resourceId: resourceId
@@ -3065,7 +3067,6 @@ components:
         target:
           default: true
           metadata:
-            providerMetadata: providerMetadata
             targetId: targetId
             updatedAt: updatedAt
             uptime: 0
@@ -3080,6 +3081,7 @@ components:
               runnerId: runnerId
               label: label
               version: version
+          providerMetadata: providerMetadata
           lastJob:
             createdAt: createdAt
             resourceId: resourceId
@@ -3329,25 +3331,6 @@ components:
       - ResourceStateNamePendingForcedDelete
       - ResourceStateNameDeleting
       - ResourceStateNameDeleted
-    provider.ProviderInfo:
-      example:
-        agentlessTarget: true
-        name: name
-        label: label
-        version: version
-      properties:
-        agentlessTarget:
-          type: boolean
-        label:
-          type: string
-        name:
-          type: string
-        version:
-          type: string
-      required:
-      - name
-      - version
-      type: object
   securitySchemes:
     Bearer:
       description: '"Type ''Bearer TOKEN'' to correctly set the API Key"'

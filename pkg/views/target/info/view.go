@@ -53,7 +53,7 @@ func Render(target *apiclient.TargetDTO, forceUnstyled bool) {
 	output += getInfoLine("Options", target.TargetConfig.Options) + "\n"
 
 	if target.Info != nil {
-		output += getInfoLine("Metadata", *target.Info.ProviderMetadata) + "\n"
+		output += getInfoLine("Metadata", *target.ProviderMetadata) + "\n"
 	}
 
 	terminalWidth, _, err := term.GetSize(int(os.Stdout.Fd()))

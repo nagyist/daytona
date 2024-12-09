@@ -869,7 +869,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/provider.ProviderInfo"
+                                "$ref": "#/definitions/ProviderInfo"
                             }
                         }
                     }
@@ -1997,7 +1997,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "providerInfo": {
-                    "$ref": "#/definitions/TargetProviderInfo"
+                    "$ref": "#/definitions/ProviderInfo"
                 }
             }
         },
@@ -2736,6 +2736,31 @@ const docTemplate = `{
                 }
             }
         },
+        "ProviderInfo": {
+            "type": "object",
+            "required": [
+                "name",
+                "runnerId",
+                "version"
+            ],
+            "properties": {
+                "agentlessTarget": {
+                    "type": "boolean"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "runnerId": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "RegisterRunnerDTO": {
             "type": "object",
             "required": [
@@ -2828,7 +2853,7 @@ const docTemplate = `{
                 "providers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/TargetProviderInfo"
+                        "$ref": "#/definitions/ProviderInfo"
                     }
                 },
                 "runnerId": {
@@ -2923,6 +2948,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/LogFileConfig"
                 },
                 "providersDir": {
+                    "description": "TODO: Move to runner config",
                     "type": "string"
                 },
                 "registryUrl": {
@@ -3067,6 +3093,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "providerMetadata": {
+                    "type": "string"
+                },
                 "targetConfig": {
                     "$ref": "#/definitions/TargetConfig"
                 },
@@ -3105,7 +3134,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "providerInfo": {
-                    "$ref": "#/definitions/TargetProviderInfo"
+                    "$ref": "#/definitions/ProviderInfo"
                 }
             }
         },
@@ -3143,6 +3172,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "providerMetadata": {
+                    "type": "string"
+                },
                 "state": {
                     "$ref": "#/definitions/ResourceState"
                 },
@@ -3168,9 +3200,6 @@ const docTemplate = `{
                 "uptime"
             ],
             "properties": {
-                "providerMetadata": {
-                    "type": "string"
-                },
                 "targetId": {
                     "type": "string"
                 },
@@ -3179,31 +3208,6 @@ const docTemplate = `{
                 },
                 "uptime": {
                     "type": "integer"
-                }
-            }
-        },
-        "TargetProviderInfo": {
-            "type": "object",
-            "required": [
-                "name",
-                "runnerId",
-                "version"
-            ],
-            "properties": {
-                "agentlessTarget": {
-                    "type": "boolean"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "runnerId": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
                 }
             }
         },
@@ -3474,27 +3478,6 @@ const docTemplate = `{
                 "ResourceStateNameDeleting",
                 "ResourceStateNameDeleted"
             ]
-        },
-        "provider.ProviderInfo": {
-            "type": "object",
-            "required": [
-                "name",
-                "version"
-            ],
-            "properties": {
-                "agentlessTarget": {
-                    "type": "boolean"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
         }
     },
     "securityDefinitions": {
