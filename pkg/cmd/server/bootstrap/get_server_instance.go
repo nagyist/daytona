@@ -28,6 +28,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/server/headscale"
 	"github.com/daytonaio/daytona/pkg/server/jobs"
 	"github.com/daytonaio/daytona/pkg/server/registry"
+	"github.com/daytonaio/daytona/pkg/server/runners"
 	"github.com/daytonaio/daytona/pkg/server/targetconfigs"
 	"github.com/daytonaio/daytona/pkg/server/targets"
 	"github.com/daytonaio/daytona/pkg/server/workspaces"
@@ -100,6 +101,14 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 		return nil, err
 	}
 	jobStore, err := db.NewJobStore(store)
+	if err != nil {
+		return nil, err
+	}
+	runnerStore, err := db.NewRunnerStore(store)
+	if err != nil {
+		return nil, err
+	}
+	runnerMetadataStore, err := db.NewRunnerMetadataStore(store)
 	if err != nil {
 		return nil, err
 	}
@@ -398,6 +407,16 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 		EnvironmentVariableStore: envVarStore,
 	})
 
+	runnerService := runners.NewRunnerService(runners.RunnerServiceConfig{
+		RunnerStore:         runnerStore,
+		RunnerMetadataStore: runnerMetadataStore,
+		GenerateApiKey: func(ctx context.Context, name string) (string, error) {
+			return apiKeyService.Generate(ctx, models.ApiKeyTypeRunner, name)
+		},
+		RevokeApiKey:        apiKeyService.Revoke,
+		TrackTelemetryEvent: telemetryService.TrackServerEvent,
+	})
+
 	s := server.GetInstance(&server.ServerInstanceConfig{
 		Config:                     *c,
 		Version:                    version,
@@ -413,6 +432,7 @@ func GetInstance(c *server.Config, configDir string, version string, telemetrySe
 		ProviderManager:            providerManager,
 		EnvironmentVariableService: envVarService,
 		JobService:                 jobService,
+		RunnerService:              runnerService,
 		TelemetryService:           telemetryService,
 	})
 

@@ -959,6 +959,112 @@ const docTemplate = `{
                 }
             }
         },
+        "/runner": {
+            "get": {
+                "description": "List runners",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "runner"
+                ],
+                "summary": "List runners",
+                "operationId": "ListRunners",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/RunnerDTO"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Register a runner",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "runner"
+                ],
+                "summary": "Register a runner",
+                "operationId": "RegisterRunner",
+                "parameters": [
+                    {
+                        "description": "Register runner",
+                        "name": "runner",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RegisterRunnerDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RunnerDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/runner/{runnerId}": {
+            "get": {
+                "description": "Get a runner",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "runner"
+                ],
+                "summary": "Get a runner",
+                "operationId": "GetRunner",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Runner ID",
+                        "name": "runnerId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RunnerDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove runner",
+                "tags": [
+                    "runner"
+                ],
+                "summary": "Remove runner",
+                "operationId": "RemoveRunner",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Runner ID",
+                        "name": "runnerId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/sample": {
             "get": {
                 "description": "List samples",
@@ -2745,6 +2851,21 @@ const docTemplate = `{
                 }
             }
         },
+        "RegisterRunnerDTO": {
+            "type": "object",
+            "required": [
+                "alias",
+                "id"
+            ],
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "RepositoryUrl": {
             "type": "object",
             "required": [
@@ -2786,6 +2907,58 @@ const docTemplate = `{
                 "ResourceTypeTarget",
                 "ResourceTypeBuild"
             ]
+        },
+        "RunnerDTO": {
+            "type": "object",
+            "required": [
+                "alias",
+                "id",
+                "state"
+            ],
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/RunnerMetadata"
+                },
+                "state": {
+                    "type": "string"
+                }
+            }
+        },
+        "RunnerMetadata": {
+            "type": "object",
+            "required": [
+                "providers",
+                "runnerId",
+                "runningJobs",
+                "updatedAt",
+                "uptime"
+            ],
+            "properties": {
+                "providers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TargetProviderInfo"
+                    }
+                },
+                "runnerId": {
+                    "type": "string"
+                },
+                "runningJobs": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "uptime": {
+                    "type": "integer"
+                }
+            }
         },
         "Sample": {
             "type": "object",
@@ -3179,6 +3352,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
+                "runnerId",
                 "version"
             ],
             "properties": {
@@ -3189,6 +3363,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "runnerId": {
                     "type": "string"
                 },
                 "version": {
@@ -3411,12 +3588,14 @@ const docTemplate = `{
             "enum": [
                 "client",
                 "workspace",
-                "target"
+                "target",
+                "runner"
             ],
             "x-enum-varnames": [
                 "ApiKeyTypeClient",
                 "ApiKeyTypeWorkspace",
-                "ApiKeyTypeTarget"
+                "ApiKeyTypeTarget",
+                "ApiKeyTypeRunner"
             ]
         },
         "models.JobAction": {

@@ -542,6 +542,16 @@ definitions:
     - name
     - version
     type: object
+  RegisterRunnerDTO:
+    properties:
+      alias:
+        type: string
+      id:
+        type: string
+    required:
+    - alias
+    - id
+    type: object
   RepositoryUrl:
     properties:
       url:
@@ -571,6 +581,42 @@ definitions:
     - ResourceTypeWorkspace
     - ResourceTypeTarget
     - ResourceTypeBuild
+  RunnerDTO:
+    properties:
+      alias:
+        type: string
+      id:
+        type: string
+      metadata:
+        $ref: '#/definitions/RunnerMetadata'
+      state:
+        type: string
+    required:
+    - alias
+    - id
+    - state
+    type: object
+  RunnerMetadata:
+    properties:
+      providers:
+        items:
+          $ref: '#/definitions/TargetProviderInfo'
+        type: array
+      runnerId:
+        type: string
+      runningJobs:
+        type: integer
+      updatedAt:
+        type: string
+      uptime:
+        type: integer
+    required:
+    - providers
+    - runnerId
+    - runningJobs
+    - updatedAt
+    - uptime
+    type: object
   Sample:
     properties:
       description:
@@ -859,10 +905,13 @@ definitions:
         type: string
       name:
         type: string
+      runnerId:
+        type: string
       version:
         type: string
     required:
     - name
+    - runnerId
     - version
     type: object
   Workspace:
@@ -1017,11 +1066,13 @@ definitions:
     - client
     - workspace
     - target
+    - runner
     type: string
     x-enum-varnames:
     - ApiKeyTypeClient
     - ApiKeyTypeWorkspace
     - ApiKeyTypeTarget
+    - ApiKeyTypeRunner
   models.JobAction:
     enum:
     - create
@@ -1736,6 +1787,77 @@ paths:
       summary: Install a provider
       tags:
       - provider
+  /runner:
+    get:
+      description: List runners
+      operationId: ListRunners
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/RunnerDTO'
+            type: array
+      summary: List runners
+      tags:
+      - runner
+    post:
+      description: Register a runner
+      operationId: RegisterRunner
+      parameters:
+      - description: Register runner
+        in: body
+        name: runner
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterRunnerDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RunnerDTO'
+      summary: Register a runner
+      tags:
+      - runner
+  /runner/{runnerId}:
+    delete:
+      description: Remove runner
+      operationId: RemoveRunner
+      parameters:
+      - description: Runner ID
+        in: path
+        name: runnerId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Remove runner
+      tags:
+      - runner
+    get:
+      description: Get a runner
+      operationId: GetRunner
+      parameters:
+      - description: Runner ID
+        in: path
+        name: runnerId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RunnerDTO'
+      summary: Get a runner
+      tags:
+      - runner
   /sample:
     get:
       description: List samples

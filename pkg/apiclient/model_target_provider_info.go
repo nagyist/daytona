@@ -24,6 +24,7 @@ type TargetProviderInfo struct {
 	AgentlessTarget *bool   `json:"agentlessTarget,omitempty"`
 	Label           *string `json:"label,omitempty"`
 	Name            string  `json:"name"`
+	RunnerId        string  `json:"runnerId"`
 	Version         string  `json:"version"`
 }
 
@@ -33,9 +34,10 @@ type _TargetProviderInfo TargetProviderInfo
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTargetProviderInfo(name string, version string) *TargetProviderInfo {
+func NewTargetProviderInfo(name string, runnerId string, version string) *TargetProviderInfo {
 	this := TargetProviderInfo{}
 	this.Name = name
+	this.RunnerId = runnerId
 	this.Version = version
 	return &this
 }
@@ -136,6 +138,30 @@ func (o *TargetProviderInfo) SetName(v string) {
 	o.Name = v
 }
 
+// GetRunnerId returns the RunnerId field value
+func (o *TargetProviderInfo) GetRunnerId() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.RunnerId
+}
+
+// GetRunnerIdOk returns a tuple with the RunnerId field value
+// and a boolean to check if the value has been set.
+func (o *TargetProviderInfo) GetRunnerIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.RunnerId, true
+}
+
+// SetRunnerId sets field value
+func (o *TargetProviderInfo) SetRunnerId(v string) {
+	o.RunnerId = v
+}
+
 // GetVersion returns the Version field value
 func (o *TargetProviderInfo) GetVersion() string {
 	if o == nil {
@@ -177,6 +203,7 @@ func (o TargetProviderInfo) ToMap() (map[string]interface{}, error) {
 		toSerialize["label"] = o.Label
 	}
 	toSerialize["name"] = o.Name
+	toSerialize["runnerId"] = o.RunnerId
 	toSerialize["version"] = o.Version
 	return toSerialize, nil
 }
@@ -187,6 +214,7 @@ func (o *TargetProviderInfo) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"name",
+		"runnerId",
 		"version",
 	}
 

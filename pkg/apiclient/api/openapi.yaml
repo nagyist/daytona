@@ -681,6 +681,81 @@ paths:
       summary: Uninstall a provider
       tags:
       - provider
+  /runner:
+    get:
+      description: List runners
+      operationId: ListRunners
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/RunnerDTO'
+                type: array
+          description: OK
+      summary: List runners
+      tags:
+      - runner
+    post:
+      description: Register a runner
+      operationId: RegisterRunner
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/RegisterRunnerDTO'
+        description: Register runner
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunnerDTO'
+          description: OK
+      summary: Register a runner
+      tags:
+      - runner
+      x-codegen-request-body-name: runner
+  /runner/{runnerId}:
+    delete:
+      description: Remove runner
+      operationId: RemoveRunner
+      parameters:
+      - description: Runner ID
+        in: path
+        name: runnerId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: OK
+      summary: Remove runner
+      tags:
+      - runner
+    get:
+      description: Get a runner
+      operationId: GetRunner
+      parameters:
+      - description: Runner ID
+        in: path
+        name: runnerId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunnerDTO'
+          description: OK
+      summary: Get a runner
+      tags:
+      - runner
   /sample:
     get:
       description: List samples
@@ -1407,6 +1482,7 @@ components:
         providerInfo:
           agentlessTarget: true
           name: name
+          runnerId: runnerId
           label: label
           version: version
       properties:
@@ -2199,6 +2275,19 @@ components:
       - name
       - version
       type: object
+    RegisterRunnerDTO:
+      example:
+        alias: alias
+        id: id
+      properties:
+        alias:
+          type: string
+        id:
+          type: string
+      required:
+      - alias
+      - id
+      type: object
     RepositoryUrl:
       example:
         url: url
@@ -2234,6 +2323,78 @@ components:
       - ResourceTypeWorkspace
       - ResourceTypeTarget
       - ResourceTypeBuild
+    RunnerDTO:
+      example:
+        metadata:
+          runningJobs: 0
+          runnerId: runnerId
+          providers:
+          - agentlessTarget: true
+            name: name
+            runnerId: runnerId
+            label: label
+            version: version
+          - agentlessTarget: true
+            name: name
+            runnerId: runnerId
+            label: label
+            version: version
+          updatedAt: updatedAt
+          uptime: 6
+        alias: alias
+        id: id
+        state: state
+      properties:
+        alias:
+          type: string
+        id:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/RunnerMetadata'
+        state:
+          type: string
+      required:
+      - alias
+      - id
+      - state
+      type: object
+    RunnerMetadata:
+      example:
+        runningJobs: 0
+        runnerId: runnerId
+        providers:
+        - agentlessTarget: true
+          name: name
+          runnerId: runnerId
+          label: label
+          version: version
+        - agentlessTarget: true
+          name: name
+          runnerId: runnerId
+          label: label
+          version: version
+        updatedAt: updatedAt
+        uptime: 6
+      properties:
+        providers:
+          items:
+            $ref: '#/components/schemas/TargetProviderInfo'
+          type: array
+        runnerId:
+          type: string
+        runningJobs:
+          type: integer
+        updatedAt:
+          type: string
+        uptime:
+          type: integer
+      required:
+      - providers
+      - runnerId
+      - runningJobs
+      - updatedAt
+      - uptime
+      type: object
     Sample:
       example:
         name: name
@@ -2438,6 +2599,7 @@ components:
           providerInfo:
             agentlessTarget: true
             name: name
+            runnerId: runnerId
             label: label
             version: version
         lastJob:
@@ -2498,6 +2660,7 @@ components:
         providerInfo:
           agentlessTarget: true
           name: name
+          runnerId: runnerId
           label: label
           version: version
       properties:
@@ -2570,6 +2733,7 @@ components:
           providerInfo:
             agentlessTarget: true
             name: name
+            runnerId: runnerId
             label: label
             version: version
         lastJob:
@@ -2657,6 +2821,7 @@ components:
               providerInfo:
                 agentlessTarget: true
                 name: name
+                runnerId: runnerId
                 label: label
                 version: version
             lastJob:
@@ -2742,6 +2907,7 @@ components:
               providerInfo:
                 agentlessTarget: true
                 name: name
+                runnerId: runnerId
                 label: label
                 version: version
             lastJob:
@@ -2834,6 +3000,7 @@ components:
       example:
         agentlessTarget: true
         name: name
+        runnerId: runnerId
         label: label
         version: version
       properties:
@@ -2843,10 +3010,13 @@ components:
           type: string
         name:
           type: string
+        runnerId:
+          type: string
         version:
           type: string
       required:
       - name
+      - runnerId
       - version
       type: object
     Workspace:
@@ -2917,6 +3087,7 @@ components:
             providerInfo:
               agentlessTarget: true
               name: name
+              runnerId: runnerId
               label: label
               version: version
           lastJob:
@@ -3023,6 +3194,7 @@ components:
             providerInfo:
               agentlessTarget: true
               name: name
+              runnerId: runnerId
               label: label
               version: version
           lastJob:
@@ -3237,11 +3409,13 @@ components:
       - client
       - workspace
       - target
+      - runner
       type: string
       x-enum-varnames:
       - ApiKeyTypeClient
       - ApiKeyTypeWorkspace
       - ApiKeyTypeTarget
+      - ApiKeyTypeRunner
     models.JobAction:
       enum:
       - create

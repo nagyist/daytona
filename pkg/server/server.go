@@ -30,6 +30,7 @@ type ServerInstanceConfig struct {
 	ProviderManager            manager.IProviderManager
 	EnvironmentVariableService services.IEnvironmentVariableService
 	JobService                 services.IJobService
+	RunnerService              services.IRunnerService
 	TelemetryService           telemetry.TelemetryService
 }
 
@@ -60,6 +61,7 @@ func GetInstance(serverConfig *ServerInstanceConfig) *Server {
 			ProviderManager:            serverConfig.ProviderManager,
 			EnvironmentVariableService: serverConfig.EnvironmentVariableService,
 			JobService:                 serverConfig.JobService,
+			RunnerService:              serverConfig.RunnerService,
 			TelemetryService:           serverConfig.TelemetryService,
 		}
 	}
@@ -83,6 +85,7 @@ type Server struct {
 	ProviderManager            manager.IProviderManager
 	EnvironmentVariableService services.IEnvironmentVariableService
 	JobService                 services.IJobService
+	RunnerService              services.IRunnerService
 	TelemetryService           telemetry.TelemetryService
 }
 

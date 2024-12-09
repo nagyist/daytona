@@ -95,7 +95,7 @@ func (s *WorkspaceService) HandleSuccessfulRemoval(ctx context.Context, workspac
 		return s.handleRemoveError(ctx, ws, stores.ErrWorkspaceNotFound)
 	}
 
-	metadata, err := s.workspaceMetadataStore.Find(ctx, &stores.WorkspaceMetadataFilter{WorkspaceId: &workspaceId})
+	metadata, err := s.workspaceMetadataStore.Find(ctx, workspaceId)
 	if err != nil {
 		return s.handleRemoveError(ctx, ws, err)
 	}

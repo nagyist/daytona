@@ -7,13 +7,14 @@ Name | Type | Description | Notes
 **AgentlessTarget** | Pointer to **bool** |  | [optional] 
 **Label** | Pointer to **string** |  | [optional] 
 **Name** | **string** |  | 
+**RunnerId** | **string** |  | 
 **Version** | **string** |  | 
 
 ## Methods
 
 ### NewTargetProviderInfo
 
-`func NewTargetProviderInfo(name string, version string, ) *TargetProviderInfo`
+`func NewTargetProviderInfo(name string, runnerId string, version string, ) *TargetProviderInfo`
 
 NewTargetProviderInfo instantiates a new TargetProviderInfo object
 This constructor will assign default values to properties that have it defined,
@@ -96,6 +97,26 @@ and a boolean to check if the value has been set.
 `func (o *TargetProviderInfo) SetName(v string)`
 
 SetName sets Name field to given value.
+
+
+### GetRunnerId
+
+`func (o *TargetProviderInfo) GetRunnerId() string`
+
+GetRunnerId returns the RunnerId field if non-nil, zero value otherwise.
+
+### GetRunnerIdOk
+
+`func (o *TargetProviderInfo) GetRunnerIdOk() (*string, bool)`
+
+GetRunnerIdOk returns a tuple with the RunnerId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetRunnerId
+
+`func (o *TargetProviderInfo) SetRunnerId(v string)`
+
+SetRunnerId sets RunnerId field to given value.
 
 
 ### GetVersion

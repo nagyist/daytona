@@ -114,6 +114,10 @@ Class | Method | HTTP request | Description
 *ProviderAPI* | [**InstallProvider**](docs/ProviderAPI.md#installprovider) | **Post** /provider/install | Install a provider
 *ProviderAPI* | [**ListProviders**](docs/ProviderAPI.md#listproviders) | **Get** /provider | List providers
 *ProviderAPI* | [**UninstallProvider**](docs/ProviderAPI.md#uninstallprovider) | **Post** /provider/{provider}/uninstall | Uninstall a provider
+*RunnerAPI* | [**GetRunner**](docs/RunnerAPI.md#getrunner) | **Get** /runner/{runnerId} | Get a runner
+*RunnerAPI* | [**ListRunners**](docs/RunnerAPI.md#listrunners) | **Get** /runner | List runners
+*RunnerAPI* | [**RegisterRunner**](docs/RunnerAPI.md#registerrunner) | **Post** /runner | Register a runner
+*RunnerAPI* | [**RemoveRunner**](docs/RunnerAPI.md#removerunner) | **Delete** /runner/{runnerId} | Remove runner
 *SampleAPI* | [**ListSamples**](docs/SampleAPI.md#listsamples) | **Get** /sample | List samples
 *ServerAPI* | [**GenerateNetworkKey**](docs/ServerAPI.md#generatenetworkkey) | **Post** /server/network-key | Generate a new authentication key
 *ServerAPI* | [**GetConfig**](docs/ServerAPI.md#getconfig) | **Get** /server/config | Get the server configuration
@@ -184,9 +188,12 @@ Class | Method | HTTP request | Description
  - [PrebuildDTO](docs/PrebuildDTO.md)
  - [Provider](docs/Provider.md)
  - [ProviderTargetConfigPropertyType](docs/ProviderTargetConfigPropertyType.md)
+ - [RegisterRunnerDTO](docs/RegisterRunnerDTO.md)
  - [RepositoryUrl](docs/RepositoryUrl.md)
  - [ResourceState](docs/ResourceState.md)
  - [ResourceType](docs/ResourceType.md)
+ - [RunnerDTO](docs/RunnerDTO.md)
+ - [RunnerMetadata](docs/RunnerMetadata.md)
  - [Sample](docs/Sample.md)
  - [ServerConfig](docs/ServerConfig.md)
  - [SetGitProviderConfig](docs/SetGitProviderConfig.md)

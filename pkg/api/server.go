@@ -41,6 +41,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/api/controllers/job"
 	log_controller "github.com/daytonaio/daytona/pkg/api/controllers/log"
 	"github.com/daytonaio/daytona/pkg/api/controllers/provider"
+	"github.com/daytonaio/daytona/pkg/api/controllers/runner"
 	"github.com/daytonaio/daytona/pkg/api/controllers/sample"
 	"github.com/daytonaio/daytona/pkg/api/controllers/server"
 	"github.com/daytonaio/daytona/pkg/api/controllers/target"
@@ -261,6 +262,14 @@ func (a *ApiServer) Start() error {
 	samplesController := protected.Group("/sample")
 	{
 		samplesController.GET("/", sample.ListSamples)
+	}
+
+	runnerController := protected.Group("/runner")
+	{
+		runnerController.GET("/", runner.ListRunners)
+		runnerController.POST("/", runner.RegisterRunner)
+		runnerController.GET("/:runnerId", runner.GetRunner)
+		runnerController.DELETE("/:runnerId", runner.RemoveRunner)
 	}
 
 	workspaceGroup := protected.Group("/")

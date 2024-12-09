@@ -63,6 +63,7 @@ type TargetInfo struct {
 } // @name TargetInfo
 
 type ProviderInfo struct {
+	RunnerId        string  `json:"runnerId" validate:"required"`
 	Name            string  `json:"name" validate:"required"`
 	Version         string  `json:"version" validate:"required"`
 	AgentlessTarget bool    `json:"agentlessTarget" validate:"optional"`
