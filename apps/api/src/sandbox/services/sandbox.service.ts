@@ -163,7 +163,7 @@ export class SandboxService {
     if (sandbox.pending) {
       throw new SandboxError('Sandbox state change in progress')
     }
-    sandbox.pending = true
+    sandbox.state = SandboxState.ARCHIVING
     sandbox.desiredState = SandboxDesiredState.ARCHIVED
     await this.sandboxRepository.save(sandbox)
 
@@ -572,6 +572,7 @@ export class SandboxService {
     }
     sandbox.pending = true
     sandbox.desiredState = SandboxDesiredState.DESTROYED
+    sandbox.backupState = BackupState.NONE
     await this.sandboxRepository.save(sandbox)
 
     this.eventEmitter.emit(SandboxEvents.DESTROYED, new SandboxDestroyedEvent(sandbox))
@@ -588,11 +589,11 @@ export class SandboxService {
       throw new NotFoundException(`Sandbox with ID ${sandboxId} not found`)
     }
 
-    if (String(sandbox.state) !== String(sandbox.desiredState)) {
+    if (String(sandbox.state) !== String(sandbox.desiredState) && sandbox.state !== SandboxState.ARCHIVING) {
       throw new SandboxError('State change in progress')
     }
 
-    if (![SandboxState.STOPPED, SandboxState.ARCHIVED].includes(sandbox.state)) {
+    if (![SandboxState.STOPPED, SandboxState.ARCHIVED, SandboxState.ARCHIVING].includes(sandbox.state)) {
       throw new SandboxError('Sandbox is not in valid state')
     }
 
